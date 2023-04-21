@@ -2,7 +2,9 @@ import { AUTHENTICATE, LOGOUT } from "../actions/auth";
 
 //Initialising state
 const initialState = {
-  fullname: null,
+  user: null,
+  balance: 100,
+  OMFPercentage: 5,
 };
 
 //Handling actions
@@ -10,7 +12,7 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case AUTHENTICATE:
       return {
-        fullname: action.fullname,
+        user: action.user,
       };
     case LOGOUT:
       return initialState;

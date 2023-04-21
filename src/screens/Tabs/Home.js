@@ -1,12 +1,9 @@
 import React from "react";
 import { Text, View } from "react-native";
+import ComingSoon from "../ComingSoon";
 
 const Home = () => {
-  return (
-    <View>
-      <Text>Home</Text>
-    </View>
-  );
+  return <ComingSoon />;
 };
 
 export default Home;

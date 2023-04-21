@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import colors from "../../constants/colors";
 import normalize from "react-native-normalize";
 import Icon from "react-native-vector-icons/AntDesign";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Keyboard, StyleSheet, View } from "react-native";
 import CustomText from "../../component/CustomText";
 import CustomTextInput from "../../component/CustomTextInput";
 import { Field, Formik } from "formik";
@@ -10,8 +10,8 @@ import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import CustomButton from "../../component/CustomButton";
 import { Dropdown } from "react-native-element-dropdown";
-import AntDesign from "@expo/vector-icons/AntDesign";
-
+import * as Auth from "@store/actions/auth";
+import Toast from "react-native-toast-message";
 const ValidationSchema = yup.object().shape({
   email: yup
     .string()
@@ -30,6 +30,33 @@ const Register = ({ navigation }) => {
   const [value, setValue] = useState("USD");
   const [isFocus, setIsFocus] = useState(false);
   const dispatch = useDispatch();
+  const SignUpHandler = async (values, { resetForm }) => {
+    Keyboard.dismiss();
+    action = Auth.signup(values);
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(action);
+      resetForm({ values: "" });
+      setIsLoading(false);
+      navigation.navigate("BottomTabsNavigation");
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
+    }
+  };
+  console.log(error);
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: error,
+        text2: "Check your informations",
+        visibilityTime: 6000,
+        autoHide: true,
+      });
+    }
+  }, [error]);
   return (
     <View style={{ backgroundColor: "black", flex: 1 }}>
       <View
@@ -61,10 +88,12 @@ const Register = ({ navigation }) => {
             validationSchema={ValidationSchema}
             initialValues={{
               name: "",
+              email: "",
               password: "",
+              currency: "USD",
             }}
             onSubmit={(values, { resetForm }) => {
-              LoginHandler(values, { resetForm });
+              SignUpHandler(values, { resetForm });
             }}
           >
             {({ handleSubmit, isValid }) => (
@@ -147,6 +176,7 @@ const Register = ({ navigation }) => {
           </View>
         </View>
       </View>
+      <Toast />
     </View>
   );
 };

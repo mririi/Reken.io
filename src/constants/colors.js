@@ -5,5 +5,7 @@ export default {
   text: "#AAAAAA",
   title: "#ffffff",
   black: "#000000",
-  background: "#F5F5F5",
+  background: "#000000",
+  BottomTabBG: "#252525",
+  BottomTabIcon: "#757575",
 };

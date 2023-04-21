@@ -4,6 +4,12 @@ module.exports = function (api) {
     presets: ["babel-preset-expo"],
     plugins: [
       [
+        "module:react-native-dotenv",
+        {
+          moduleName: "dotenv",
+        },
+      ],
+      [
         "module-resolver",
         {
           root: ["."], //  This says the root of your project folder

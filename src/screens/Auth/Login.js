@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import colors from "../../constants/colors";
 import normalize from "react-native-normalize";
 import Icon from "react-native-vector-icons/AntDesign";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Keyboard, View } from "react-native";
 import CustomText from "../../component/CustomText";
 import CustomTextInput from "../../component/CustomTextInput";
 import { Field, Formik } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import CustomButton from "../../component/CustomButton";
+import * as Auth from "@store/actions/auth";
+import Toast from "react-native-toast-message";
 const signInValidationSchema = yup.object().shape({
   email: yup
     .string()
@@ -20,6 +22,32 @@ const Login = ({ navigation }) => {
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
+  const LoginHandler = async (values, { resetForm }) => {
+    Keyboard.dismiss();
+    action = Auth.login(values);
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(action);
+      resetForm({ values: "" });
+      setIsLoading(false);
+      navigation.navigate("Home");
+    } catch (err) {
+      setError("Invalid credentials");
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: error,
+        text2: "Check your informations",
+        visibilityTime: 6000,
+        autoHide: true,
+      });
+    }
+  }, [error]);
   return (
     <View style={{ backgroundColor: "black", flex: 1 }}>
       <View
@@ -115,6 +143,7 @@ const Login = ({ navigation }) => {
           </View>
         </View>
       </View>
+      <Toast />
     </View>
   );
 };

@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  Image,
-  ImageBackground,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ImageBackground, TouchableOpacity, View } from "react-native";
 import normalize from "react-native-normalize";
 import colors from "../constants/colors";
 import Icon from "react-native-vector-icons/AntDesign";
