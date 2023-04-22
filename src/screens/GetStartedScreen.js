@@ -31,10 +31,11 @@ const GetStartedScreen = ({ navigation }) => {
             position: "absolute",
             bottom: normalize(145),
             left: normalize(30),
-            maxWidth: normalize(192),
           }}
         >
-          <CustomText title={true}>{title}</CustomText>
+          <CustomText title={true} style={{ maxWidth: normalize(192) }}>
+            {title}
+          </CustomText>
           <CustomText>{text}</CustomText>
         </View>
         {!last && (

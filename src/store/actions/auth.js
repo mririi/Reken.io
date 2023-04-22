@@ -40,13 +40,11 @@ export const login = (user) => {
           newlogintype: "rekenio",
         })
         .then(async (response) => {
-          console.log(response);
           dispatch({
             type: AUTHENTICATE,
             user: response.data.user,
-            token: response.data.data.token,
           });
-          saveDataToStorage(response.data.data.token);
+          saveDataToStorage(response.data);
         })
         .catch((error) => {
           console.log(error);
@@ -155,61 +153,19 @@ export const verifyCode = (values) => {
     }
   };
 };
-//Declaring the signup action
-export const updateProfile = (values) => {
+export const getUser = () => {
   return async (dispatch) => {
     const userData = await AsyncStorage.getItem("userData");
-    const { token } = JSON.parse(userData);
-    const formData = new FormData();
-    console.log(values.image);
-    formData.append("photo", values.image);
-    formData.append("name", values.name);
-    formData.append("email", values.email);
-    formData.append("phone", values.phone);
-    await axios
-      .post("https://mft.aeliusventure.com/api/auth/update-profile", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + token,
-        },
-      })
-      .then((response) => console.log(response))
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-};
-export const getUser = (token) => {
-  return async (dispatch) => {
+    const { data } = JSON.parse(userData);
     try {
       await axios
-        .post("https://mft.aeliusventure.com/api/auth/refreshToken", null, {
+        .get(`${API_URL}user-detail/${data.user.id}`, {
           headers: {
-            Authorization: "Bearer " + token,
+            Authorization: data.data.token,
           },
         })
         .then(async (response) => {
-          AsyncStorage.removeItem("userData");
-          saveDataToStorage(response.data.access_token);
-          await axios
-            .get("https://mft.aeliusventure.com/api/auth/user-profile", {
-              headers: {
-                Authorization: "Bearer " + response.data.access_token,
-              },
-            })
-            .then((response) => {
-              dispatch({
-                type: AUTHENTICATE,
-                user: response.data.user,
-              });
-            })
-            .catch((error) => {
-              let message = "Something went wrong!";
-              if (error.response.data.message) {
-                message = error.response.data.message;
-              }
-              throw new Error(message);
-            });
+          dispatch({ type: "AUTHENTICATE", user: response.data });
         })
         .catch((error) => {
           let message = "Something went wrong!";
@@ -219,25 +175,20 @@ export const getUser = (token) => {
           throw new Error(message);
         });
     } catch (error) {
-      let message = "Something went wrong!";
-      if (error.response.data.message) {
-        message = error.response.data.message;
-      }
-      throw new Error(message);
+      throw new Error(error.message);
     }
   };
 };
-
 //Declaring the logout action
 export const logout = () => {
   AsyncStorage.removeItem("userData");
   return { type: LOGOUT };
 };
-const saveDataToStorage = (token) => {
+const saveDataToStorage = (data) => {
   AsyncStorage.setItem(
     "userData",
     JSON.stringify({
-      token: token,
+      data,
     })
   );
 };

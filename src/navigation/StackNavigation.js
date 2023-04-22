@@ -16,6 +16,7 @@ const Stack = createStackNavigator();
 
 const StackNavigation = () => {
   const [isAuth, setIsAuth] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -25,9 +26,8 @@ const StackNavigation = () => {
         setLoading(false);
         setIsAuth(false);
       } else {
-        const { token } = JSON.parse(userData);
-        dispatch(Auth.getUser(token));
         setLoading(false);
+        dispatch(Auth.getUser());
         setIsAuth(true);
       }
     };
@@ -69,6 +69,7 @@ const StackNavigation = () => {
             name="BottomTabsNavigation"
             component={BottomTabsNavigation}
           />
+          <Stack.Screen name="Login" component={Login} />
         </Stack.Navigator>
       )}
     </>

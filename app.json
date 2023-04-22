@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "reken",
+    "name": "reken.io",
     "slug": "reken",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,7 +11,9 @@
       "resizeMode": "cover",
       "backgroundColor": "#000000"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "jsEngine": "jsc"
@@ -21,11 +23,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "jsEngine": "jsc"
+      "jsEngine": "jsc",
+      "package": "com.mririi.reken"
     },
-
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8a251b2c-e795-43c1-805a-24a75cf035be"
+      }
     }
   }
 }
