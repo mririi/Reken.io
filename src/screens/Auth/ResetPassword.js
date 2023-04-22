@@ -9,17 +9,51 @@ import { Field, Formik } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import CustomButton from "../../component/CustomButton";
+import * as Auth from "@store/actions/auth";
+import { useEffect } from "react";
+import Toast from "react-native-toast-message";
+import { Keyboard } from "react-native";
+
 const ValidationSchema = yup.object().shape({
-  email: yup
+  password1: yup.string().required("Password is required"),
+  password2: yup
     .string()
-    .email("Please enter valid email")
-    .required("Email is required"),
-  password: yup.string().required("Password is required"),
+    .oneOf([yup.ref("password1")], "Passwords do not match")
+    .required("Password is required"),
 });
-const ResetPassword = ({ navigation }) => {
+const ResetPassword = ({ navigation, route }) => {
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
+  const SubmitHandler = async (values, { resetForm }) => {
+    Keyboard.dismiss();
+    action = Auth.resetPassword({
+      email: route.params.email,
+      password: values.password1,
+    });
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(action);
+      resetForm({ values: "" });
+      setIsLoading(false);
+      navigation.navigate("Login");
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: error,
+        text2: "Check your informations",
+        visibilityTime: 6000,
+        autoHide: true,
+      });
+    }
+  }, [error]);
   return (
     <View style={{ backgroundColor: "black", flex: 1 }}>
       <View
@@ -57,21 +91,21 @@ const ResetPassword = ({ navigation }) => {
               password2: "",
             }}
             onSubmit={(values, { resetForm }) => {
-              LoginHandler(values, { resetForm });
+              SubmitHandler(values, { resetForm });
             }}
           >
             {({ handleSubmit, isValid }) => (
               <>
                 <Field
                   component={CustomTextInput}
-                  name="password"
+                  name="password1"
                   label="New Password"
                   placeholder="New Password"
                   isPassword={true}
                 />
                 <Field
                   component={CustomTextInput}
-                  name="password"
+                  name="password2"
                   isPassword={true}
                   label="Confirm Password"
                   placeholder="Confirm Password"
@@ -93,6 +127,7 @@ const ResetPassword = ({ navigation }) => {
           </Formik>
         </View>
       </View>
+      <Toast />
     </View>
   );
 };

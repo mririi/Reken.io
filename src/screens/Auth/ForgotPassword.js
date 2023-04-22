@@ -9,17 +9,47 @@ import { Field, Formik } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import CustomButton from "../../component/CustomButton";
+import * as Auth from "@store/actions/auth";
+import Toast from "react-native-toast-message";
+import { useEffect } from "react";
+import { Keyboard } from "react-native";
+
 const ValidationSchema = yup.object().shape({
   email: yup
     .string()
     .email("Please enter valid email")
     .required("Email is required"),
-  password: yup.string().required("Password is required"),
 });
 const ForgotPassword = ({ navigation }) => {
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
+  const SubmitHandler = async (values, { resetForm }) => {
+    Keyboard.dismiss();
+    action = Auth.forgetPassword(values.email);
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(action);
+      resetForm({ values: "" });
+      setIsLoading(false);
+      navigation.navigate("CodeConfirmation", { email: values.email });
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: error,
+        text2: "Check your informations",
+        visibilityTime: 6000,
+        autoHide: true,
+      });
+    }
+  }, [error]);
   return (
     <View style={{ backgroundColor: "black", flex: 1 }}>
       <View
@@ -56,7 +86,7 @@ const ForgotPassword = ({ navigation }) => {
               email: "",
             }}
             onSubmit={(values, { resetForm }) => {
-              LoginHandler(values, { resetForm });
+              SubmitHandler(values, { resetForm });
             }}
           >
             {({ handleSubmit, isValid }) => (
@@ -75,8 +105,7 @@ const ForgotPassword = ({ navigation }) => {
                     <CustomButton
                       title="Continue"
                       style={{ width: "100%" }}
-                      //onPress={handleSubmit}
-                      onPress={() => navigation.navigate("CodeConfirmation")}
+                      onPress={handleSubmit}
                       disabled={!isValid}
                     />
                   </>
@@ -103,6 +132,7 @@ const ForgotPassword = ({ navigation }) => {
           </View>
         </View>
       </View>
+      <Toast />
     </View>
   );
 };

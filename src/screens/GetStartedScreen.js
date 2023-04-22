@@ -87,7 +87,7 @@ const GetStartedScreen = ({ navigation }) => {
     );
   };
   return (
-    <>
+    <View style={{ backgroundColor: "black" }}>
       {index === 1 && (
         <IntroScreen
           image={require("@assets/intro1.png")}
@@ -110,7 +110,7 @@ const GetStartedScreen = ({ navigation }) => {
           last={true}
         />
       )}
-    </>
+    </View>
   );
 };
 

@@ -10,25 +10,23 @@ export const LOGOUT = "LOGOUT";
 //Declaring the signup action
 export const signup = (values) => {
   return async (dispatch) => {
+    let bodyFormData = new FormData();
+    Object.keys(values).forEach((f) => {
+      bodyFormData.append(f, values[f]);
+    });
+    bodyFormData.append("device_type", Platform.OS == "android" ? "1" : "2");
+    bodyFormData.append("newlogintype", "rekenio");
+    bodyFormData.append("subscription", "free");
     //Adding a user to the database
     await axios
-      .post(API_URL + "signup", {
-        name: "zjzjzjz",
-        email: "zjzzj@gjgjgjg.com",
-        password: "zjzjzjzjzjzjz",
-        currency: "USD",
-        device_type: "1",
-        newlogintype: "rekenio",
-        subscription: "free",
-      })
+      .post(API_URL + "auth/user/signup", bodyFormData)
       .then((response) => console.log(response))
       .catch((error) => {
-        console.log(error);
-        // let message = "Something went wrong!";
-        // if (error.response.data.message) {
-        //   message = error.response.data.message;
-        // }
-        // throw new Error(message);
+        let message = "Something went wrong!";
+        if (error.response.data.message) {
+          message = error.response.data.message;
+        }
+        throw new Error(message);
       });
   };
 };
@@ -36,9 +34,41 @@ export const login = (user) => {
   return async (dispatch) => {
     try {
       await axios
-        .post("${API_URL}login", {
+        .post(`${API_URL}auth/user/login`, {
           email: user.email,
           password: user.password,
+          newlogintype: "rekenio",
+        })
+        .then(async (response) => {
+          console.log(response);
+          dispatch({
+            type: AUTHENTICATE,
+            user: response.data.user,
+            token: response.data.data.token,
+          });
+          saveDataToStorage(response.data.data.token);
+        })
+        .catch((error) => {
+          console.log(error);
+          let message = "Something went wrong!";
+          if (error.response.data.message) {
+            message = error.response.data.message;
+          }
+          throw new Error(message);
+        });
+    } catch (error) {
+      let message = "Something went wrong!";
+      throw new Error(message);
+    }
+  };
+};
+export const forgetPassword = (email) => {
+  return async (dispatch) => {
+    try {
+      await axios
+        .post(`${API_URL}auth/user/forgetpassword`, {
+          email: email,
+          newlogintype: "rekenio",
         })
         .then(async (response) => {
           console.log(response);
@@ -51,11 +81,77 @@ export const login = (user) => {
           throw new Error(message);
         });
     } catch (error) {
-      let message = "Something went wrong!";
-      if (error.response.data.message) {
-        message = error.response.data.message;
-      }
-      throw new Error(message);
+      throw new Error(error.message);
+    }
+  };
+};
+export const resetPassword = (values) => {
+  return async (dispatch) => {
+    try {
+      await axios
+        .post(`${API_URL}auth/user/resetpassword`, {
+          email: values.email,
+          new_password: values.password,
+          newlogintype: "rekenio",
+        })
+        .then(async (response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          let message = "Something went wrong!";
+          if (error.response.data.message) {
+            message = error.response.data.message;
+          }
+          throw new Error(message);
+        });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+};
+export const resendVerification = (email) => {
+  return async (dispatch) => {
+    try {
+      await axios
+        .post(`${API_URL}auth/user/resendverification`, {
+          email: email,
+        })
+        .then(async (response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          let message = "Something went wrong!";
+          if (error.response.data.message) {
+            message = error.response.data.message;
+          }
+          throw new Error(message);
+        });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+};
+export const verifyCode = (values) => {
+  return async (dispatch) => {
+    try {
+      await axios
+        .post(`${API_URL}auth/user/verify`, {
+          email: values.email,
+          otp: values.value,
+          newlogintype: "rekenio",
+        })
+        .then(async (response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          let message = "Something went wrong!";
+          if (error.response.data.message) {
+            message = error.response.data.message;
+          }
+          throw new Error(message);
+        });
+    } catch (error) {
+      throw new Error(error.message);
     }
   };
 };

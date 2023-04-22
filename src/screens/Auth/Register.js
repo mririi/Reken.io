@@ -12,6 +12,8 @@ import CustomButton from "../../component/CustomButton";
 import { Dropdown } from "react-native-element-dropdown";
 import * as Auth from "@store/actions/auth";
 import Toast from "react-native-toast-message";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 const ValidationSchema = yup.object().shape({
   email: yup
     .string()
@@ -45,7 +47,6 @@ const Register = ({ navigation }) => {
       setIsLoading(false);
     }
   };
-  console.log(error);
   useEffect(() => {
     if (error) {
       Toast.show({
@@ -58,9 +59,13 @@ const Register = ({ navigation }) => {
     }
   }, [error]);
   return (
-    <View style={{ backgroundColor: "black", flex: 1 }}>
+    <KeyboardAwareScrollView style={{ backgroundColor: "black", flex: 1 }}>
       <View
-        style={{ marginTop: normalize(50), width: "90%", alignSelf: "center" }}
+        style={{
+          marginTop: normalize(50),
+          width: "90%",
+          alignSelf: "center",
+        }}
       >
         <Icon
           name="left"
@@ -177,7 +182,7 @@ const Register = ({ navigation }) => {
         </View>
       </View>
       <Toast />
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 const styles = StyleSheet.create({
@@ -186,7 +191,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   dropdown: {
-    height: 50,
+    height: normalize(50),
     borderColor: "gray",
     borderBottomWidth: 2,
     paddingHorizontal: 8,
@@ -199,11 +204,11 @@ const styles = StyleSheet.create({
   label: {
     position: "absolute",
     backgroundColor: "white",
-    left: 22,
-    top: 8,
+    left: normalize(22),
+    top: normalize(8),
     zIndex: 999,
     paddingHorizontal: 8,
-    fontSize: 14,
+    fontSize: normalize(14),
     color: "white",
   },
   placeholderStyle: {

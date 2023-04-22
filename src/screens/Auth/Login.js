@@ -31,7 +31,7 @@ const Login = ({ navigation }) => {
       await dispatch(action);
       resetForm({ values: "" });
       setIsLoading(false);
-      navigation.navigate("Home");
+      navigation.navigate("BottomTabsNavigation");
     } catch (err) {
       setError("Invalid credentials");
       setIsLoading(false);
