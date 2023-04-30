@@ -61,10 +61,14 @@ const Login = ({ navigation }) => {
             navigation.pop(1);
           }}
         />
-        <View style={{ width: normalize(180), marginVertical: normalize(20) }}>
+        <View style={{ marginVertical: normalize(20) }}>
           <CustomText
             title={true}
-            style={{ fontSize: normalize(34), marginBottom: normalize(10) }}
+            style={{
+              width: normalize(180),
+              fontSize: normalize(34),
+              marginBottom: normalize(10),
+            }}
           >
             Welcome back!
           </CustomText>

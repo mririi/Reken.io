@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "dotenv";
 import { Platform } from "react-native";
-
+import currencies from "@assets/currencies.json";
 //Declaring action types
 export const AUTHENTICATE = "AUTHENTICATE";
 export const LOGOUT = "LOGOUT";
@@ -40,9 +40,11 @@ export const login = (user) => {
           newlogintype: "rekenio",
         })
         .then(async (response) => {
+          console.log(response.data.user);
           dispatch({
             type: AUTHENTICATE,
             user: response.data.user,
+            currency: getCurrencyDetails(response.data.data.currency),
           });
           saveDataToStorage(response.data);
         })
@@ -153,6 +155,9 @@ export const verifyCode = (values) => {
     }
   };
 };
+function getCurrencyDetails(currency) {
+  return currencies.find((element) => element.code === currency);
+}
 export const getUser = () => {
   return async (dispatch) => {
     const userData = await AsyncStorage.getItem("userData");
@@ -165,7 +170,11 @@ export const getUser = () => {
           },
         })
         .then(async (response) => {
-          dispatch({ type: "AUTHENTICATE", user: response.data });
+          dispatch({
+            type: AUTHENTICATE,
+            user: response.data.data,
+            currency: getCurrencyDetails(response.data.data.currency),
+          });
         })
         .catch((error) => {
           let message = "Something went wrong!";

@@ -26,8 +26,8 @@ const StackNavigation = () => {
         setLoading(false);
         setIsAuth(false);
       } else {
-        setLoading(false);
         dispatch(Auth.getUser());
+        setLoading(false);
         setIsAuth(true);
       }
     };
@@ -70,6 +70,10 @@ const StackNavigation = () => {
             component={BottomTabsNavigation}
           />
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Register" component={Register} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen name="ResetPassword" component={ResetPassword} />
+          <Stack.Screen name="CodeConfirmation" component={CodeConfirmation} />
         </Stack.Navigator>
       )}
     </>

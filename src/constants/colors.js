@@ -1,6 +1,7 @@
 export default {
   primary: "#23B63E",
   secondary: "#FFC634",
+  third: "#0A3713",
   button: "#23B63E",
   text: "#AAAAAA",
   title: "#ffffff",

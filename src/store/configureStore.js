@@ -1,10 +1,12 @@
 import { combineReducers, createStore, applyMiddleware } from "redux";
 import ReduxThunk from "redux-thunk";
 import authReducer from "../store/reducers/auth";
+import transactionsReducer from "../store/reducers/transactions";
+
 //Declaring the root reducer
 const rootReducer = combineReducers({
   auth: authReducer,
-  //tasks: tasksReducer,
+  transactions: transactionsReducer,
 });
 
 //Declaring the store

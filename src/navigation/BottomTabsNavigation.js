@@ -18,8 +18,6 @@ import Settings from "../screens/Tabs/Settings";
 import Home from "@screens/Tabs/Home";
 import normalize from "react-native-normalize";
 import CustomText from "../component/CustomText";
-import Svg, { Circle, Path } from "react-native-svg";
-import { Modal } from "react-native";
 import Menu from "../screens/Tabs/Menu";
 
 const BottomTabsNavigation = () => {
