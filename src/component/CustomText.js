@@ -22,13 +22,13 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: "poppins-regular",
     fontWeight: "400",
-    fontSize: normalize(14),
+    fontSize: 14,
   },
   title: {
     color: colors.title,
     fontFamily: "poppins-bold",
     fontWeight: "700",
-    fontSize: normalize(20),
+    fontSize: 20,
   },
 });
 export default CustomText;

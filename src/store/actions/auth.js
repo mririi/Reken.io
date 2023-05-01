@@ -6,6 +6,7 @@ import currencies from "@assets/currencies.json";
 //Declaring action types
 export const AUTHENTICATE = "AUTHENTICATE";
 export const LOGOUT = "LOGOUT";
+export const DELETE = "DELETE";
 
 //Declaring the signup action
 export const signup = (values) => {
@@ -47,6 +48,45 @@ export const login = (user) => {
             currency: getCurrencyDetails(response.data.data.currency),
           });
           saveDataToStorage(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          let message = "Something went wrong!";
+          if (error.response.data.message) {
+            message = error.response.data.message;
+          }
+          throw new Error(message);
+        });
+    } catch (error) {
+      let message = "Something went wrong!";
+      throw new Error(message);
+    }
+  };
+};
+export const updateProfile = (values) => {
+  return async (dispatch) => {
+    const userData = await AsyncStorage.getItem("userData");
+    const { data } = JSON.parse(userData);
+    let bodyFormData = new FormData();
+    Object.keys(values).forEach((f) => {
+      bodyFormData.append(f, values[f]);
+    });
+    bodyFormData.append("user_id", data.user.id);
+    console.log(bodyFormData);
+    try {
+      await axios
+        .post(`${API_URL}profileupdate`, bodyFormData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: data.data.token,
+          },
+        })
+        .then(async (response) => {
+          dispatch({
+            type: AUTHENTICATE,
+            user: response.data.data,
+            currency: getCurrencyDetails(response.data.data.currency),
+          });
         })
         .catch((error) => {
           console.log(error);
@@ -174,6 +214,39 @@ export const getUser = () => {
             type: AUTHENTICATE,
             user: response.data.data,
             currency: getCurrencyDetails(response.data.data.currency),
+          });
+        })
+        .catch((error) => {
+          let message = "Something went wrong!";
+          if (error.response.data.message) {
+            message = error.response.data.message;
+          }
+          throw new Error(message);
+        });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+};
+export const deleteAccount = () => {
+  return async (dispatch) => {
+    const userData = await AsyncStorage.getItem("userData");
+    const { data } = JSON.parse(userData);
+    try {
+      await axios
+        .post(
+          `${API_URL}delete-user-account-request`,
+          { user_id: data.user.id },
+          {
+            headers: {
+              Authorization: data.data.token,
+            },
+          }
+        )
+        .then(async (response) => {
+          AsyncStorage.removeItem("userData");
+          dispatch({
+            type: DELETE,
           });
         })
         .catch((error) => {

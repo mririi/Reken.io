@@ -1,4 +1,4 @@
-import { AUTHENTICATE, LOGOUT } from "../actions/auth";
+import { AUTHENTICATE, LOGOUT, DELETE } from "../actions/auth";
 
 //Initialising state
 const initialState = {
@@ -14,6 +14,8 @@ export default (state = initialState, action) => {
         user: action.user,
         currency: action.currency,
       };
+    case DELETE:
+      return initialState;
     case LOGOUT:
       return initialState;
     default:

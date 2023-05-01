@@ -17,67 +17,168 @@ import { Text } from "react-native";
 import { Modal } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import CustomButton from "../../component/CustomButton";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const Transactions = () => {
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isDatePickerVisible1, setDatePickerVisibility1] = useState(false);
+
   const [isFocus, setIsFocus] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("Today");
   const [search, setSearch] = useState("");
   const [items, setItems] = useState();
   const [total, setTotal] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [fromDate, setFromDate] = useState("YYYY-MM-DD");
+  const [toDate, setToDate] = useState("YYYY-MM-DD");
+  const [oldItems, setOldItems] = useState();
   const currency = useSelector((state) => state.auth.currency);
   const transactions = useSelector((state) => state.transactions.transactions);
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    setFromDate(date.toISOString().slice(0, 10));
+    hideDatePicker();
+  };
+  const showDatePicker1 = () => {
+    setDatePickerVisibility1(true);
+  };
+
+  const hideDatePicker1 = () => {
+    setDatePickerVisibility1(false);
+  };
+
+  const handleConfirm1 = (date) => {
+    setToDate(date.toISOString().slice(0, 10));
+    hideDatePicker1();
+  };
   console.log(transactions);
-  const loadTransactions = useCallback(async () => {
-    try {
-      let params = {};
-      if (selectedFilter === "Today") {
-        params = {
-          from_date: new Date().toISOString().slice(0, 10),
-          to_date: new Date().toISOString().slice(0, 10),
-        };
-      } else if (selectedFilter === "Yesterday") {
-        params = {
-          from_date: new Date(new Date().setDate(new Date().getDate() - 1))
-            .toISOString()
-            .slice(0, 10),
-          to_date: new Date(new Date().setDate(new Date().getDate() - 1))
-            .toISOString()
-            .slice(0, 10),
-        };
-      }
-      console.log(params);
-      dispatch(Transactionss.transactions(params));
-      if (transactions) {
-        const nested = transactions.map((item) => item.items);
-        setItems(nested.length > 1 ? nested.flat(Infinity) : nested[0]);
-        console.log(nested);
+  const loadTransactions = useCallback(
+    async (params) => {
+      try {
+        // if (selectedFilter === "Today") {
+        //   params = {
+        //     from_date: new Date().toISOString().slice(0, 10),
+        //     to_date: new Date().toISOString().slice(0, 10),
+        //   };
+        // } else if (selectedFilter === "Yesterday") {
+        //   params = {
+        //     from_date: new Date(new Date().setDate(new Date().getDate() - 1))
+        //       .toISOString()
+        //       .slice(0, 10),
+        //     to_date: new Date(new Date().setDate(new Date().getDate() - 1))
+        //       .toISOString()
+        //       .slice(0, 10),
+        //   };
+        // }
+        dispatch(Transactionss.transactions(params));
+
         console.log(items);
-        const totals = items.map((item) => item.total);
-        console.log(totals);
-        setTotal(
-          totals.length > 1
-            ? totals.reduce(
-                (accumulator, currentValue) => accumulator + currentValue,
-                0
-              )
-            : totals
-        );
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
+    },
+    [dispatch]
+  );
+  console.log(fromDate, toDate);
+  console.log(items);
+  useEffect(() => {
+    let params = {
+      from_date: fromDate,
+      to_date: toDate,
+    };
+    loadTransactions(params);
+  }, [fromDate, toDate]);
+  useEffect(() => {
+    if (selectedFilter === "Today") {
+      setFromDate(new Date().toISOString().slice(0, 10));
+      setToDate(new Date().toISOString().slice(0, 10));
+    } else if (selectedFilter === "Yesterday") {
+      setFromDate(
+        new Date(new Date().setDate(new Date().getDate() - 1))
+          .toISOString()
+          .slice(0, 10)
+      );
+      setToDate(
+        new Date(new Date().setDate(new Date().getDate() - 1))
+          .toISOString()
+          .slice(0, 10)
+      );
+    } else if (selectedFilter === "Last 7 Days") {
+      setFromDate(
+        new Date(new Date().setDate(new Date().getDate() - 7))
+          .toISOString()
+          .slice(0, 10)
+      );
+      setToDate(new Date().toISOString().slice(0, 10));
+    } else if (selectedFilter === "This Month") {
+      setFromDate(
+        new Date(new Date().setDate(new Date().getDate() - 30))
+          .toISOString()
+          .slice(0, 10)
+      );
+      setToDate(new Date().toISOString().slice(0, 10));
+    } else if (selectedFilter === "Last Month") {
+      setFromDate(
+        new Date(new Date().setDate(new Date().getDate() - 60))
+          .toISOString()
+          .slice(0, 10)
+      );
+      setToDate(
+        new Date(new Date().setDate(new Date().getDate() - 30))
+          .toISOString()
+          .slice(0, 10)
+      );
     }
-  }, [dispatch, selectedFilter]);
+  }, [selectedFilter]);
   useEffect(() => {
     if (isFocused) {
       loadTransactions();
     }
   }, [isFocused]);
   useEffect(() => {
+    if (transactions) {
+      const nested = transactions.map((item) => item.items);
+      setItems(nested.flat(Infinity));
+      setOldItems(items);
+    }
+  }, [transactions]);
+  useEffect(() => {
+    if (items) {
+      const totals = items.map((item) => item.total);
+      console.log(totals);
+      setTotal(
+        totals.length > 1
+          ? totals.reduce(
+              (accumulator, currentValue) => accumulator + currentValue,
+              0
+            )
+          : totals
+      );
+    }
+  }, [items]);
+  useEffect(() => {
+    if (search && items) {
+      const filtered = items.filter((item) =>
+        item.merchant_name.toLowerCase().includes(search.toLowerCase())
+      );
+      setItems(filtered);
+    }
+    if (search === "") {
+      setItems(oldItems);
+    }
+  }, [search]);
+  useEffect(() => {
     loadTransactions();
-  }, [loadTransactions, selectedFilter]);
+  }, [loadTransactions]);
   console.log(total);
   const data = [
     { label: "Today", value: "Today" },
@@ -176,69 +277,70 @@ const Transactions = () => {
             </View>
           </View>
 
-          <FlatList
-            data={items}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View
-                style={{
-                  width: "90%",
-                  alignSelf: "center",
-                  height: normalize(70),
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  paddingVertical: normalize(10),
-                  borderBottomWidth: 2,
-                  borderBottomColor: "#252525",
-                }}
-              >
-                <View style={{ flexDirection: "row" }}>
-                  <View
-                    style={{
-                      width: normalize(50),
-                      height: "100%",
-                      borderRadius: 7,
-                      marginRight: normalize(10),
-                    }}
-                  >
-                    <Image
-                      source={{
-                        uri: item.merchant_img,
-                      }}
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  </View>
-                  <View>
-                    <CustomText
-                      style={{
-                        fontWeight: "500",
-                        fontSize: normalize(14),
-                        color: "white",
-                      }}
-                    >
-                      {item.merchant_name}
-                    </CustomText>
-                    <CustomText>
-                      {((item.total * 100) / (transactions && total)).toFixed(
-                        2
-                      )}
-                      %
-                    </CustomText>
-                  </View>
-                </View>
-                <CustomText
+          {items && (
+            <FlatList
+              data={items}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View
                   style={{
-                    color: "white",
-                    marginTop: normalize(15),
+                    width: "90%",
+                    alignSelf: "center",
+                    height: normalize(70),
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    paddingVertical: normalize(10),
+                    borderBottomWidth: 2,
+                    borderBottomColor: "#252525",
                   }}
                 >
-                  {currency && currency.symbol}
-                  {item.total}
-                </CustomText>
-              </View>
-            )}
-          />
-
+                  <View style={{ flexDirection: "row" }}>
+                    <View
+                      style={{
+                        width: normalize(50),
+                        height: "100%",
+                        borderRadius: 7,
+                        marginRight: normalize(10),
+                      }}
+                    >
+                      <Image
+                        source={{
+                          uri: item.merchant_img,
+                        }}
+                        style={{ width: "100%", height: "100%" }}
+                      />
+                    </View>
+                    <View>
+                      <CustomText
+                        style={{
+                          fontWeight: "500",
+                          fontSize: normalize(14),
+                          color: "white",
+                        }}
+                      >
+                        {item.merchant_name}
+                      </CustomText>
+                      <CustomText>
+                        {((item.total * 100) / (transactions && total)).toFixed(
+                          2
+                        )}
+                        %
+                      </CustomText>
+                    </View>
+                  </View>
+                  <CustomText
+                    style={{
+                      color: "white",
+                      marginTop: normalize(15),
+                    }}
+                  >
+                    {currency && currency.symbol}
+                    {item.total}
+                  </CustomText>
+                </View>
+              )}
+            />
+          )}
           <Modal
             animationType="slide"
             transparent={true}
@@ -261,7 +363,7 @@ const Transactions = () => {
                   <CustomText title="true">Filter</CustomText>
                 </View>
                 <View style={{ width: "100%", marginBottom: normalize(20) }}>
-                  <Dropdown
+                  {/* <Dropdown
                     style={[
                       { ...styles.dropdown, ...{ width: normalize(320) } },
                       isFocus && { borderColor: colors.primary },
@@ -307,7 +409,76 @@ const Transactions = () => {
                       setSelectedFilter(item.value);
                       setIsFocus(false);
                     }}
-                  />
+                  /> */}
+                  <View style={{ marginTop: normalize(20) }}>
+                    <CustomText>Start Date</CustomText>
+                    <View style={{ flexDirection: "row" }}>
+                      <TextInput
+                        style={{
+                          borderColor: "#AAAAAA",
+                          borderBottomWidth: 3,
+                          height: normalize(40),
+                          width: "100%",
+                          color: "white",
+                          paddingHorizontal: normalize(10),
+                        }}
+                        value={fromDate}
+                        editable={false}
+                        onPressIn={showDatePicker}
+                      />
+                      <Icon
+                        name="calendar"
+                        size={normalize(20)}
+                        color={colors.text}
+                        style={{
+                          position: "absolute",
+                          right: normalize(10),
+                          marginTop: normalize(10),
+                        }}
+                      />
+                    </View>
+                    <DateTimePickerModal
+                      isVisible={isDatePickerVisible}
+                      mode="date"
+                      onConfirm={handleConfirm}
+                      onCancel={hideDatePicker}
+                    />
+                  </View>
+                  <View style={{ marginTop: normalize(20) }}>
+                    <CustomText>End Date</CustomText>
+
+                    <View style={{ flexDirection: "row" }}>
+                      <TextInput
+                        style={{
+                          borderColor: "#AAAAAA",
+                          borderBottomWidth: 3,
+                          height: normalize(40),
+                          width: "100%",
+                          color: "white",
+                          paddingHorizontal: normalize(10),
+                        }}
+                        value={toDate}
+                        editable={false}
+                        onPressIn={showDatePicker1}
+                      />
+                      <Icon
+                        name="calendar"
+                        size={normalize(20)}
+                        color={colors.text}
+                        style={{
+                          position: "absolute",
+                          right: normalize(10),
+                          marginTop: normalize(10),
+                        }}
+                      />
+                    </View>
+                    <DateTimePickerModal
+                      isVisible={isDatePickerVisible1}
+                      mode="date"
+                      onConfirm={handleConfirm1}
+                      onCancel={hideDatePicker1}
+                    />
+                  </View>
                 </View>
                 <View
                   style={{
@@ -324,6 +495,7 @@ const Transactions = () => {
                       borderWidth: 3,
                     }}
                     tstyle={{ color: colors.primary }}
+                    onPress={() => setModalVisible(!modalVisible)}
                   />
                   <CustomButton title="Submit" />
                 </View>
@@ -340,6 +512,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 20,
   },
   modalView: {
     height: "100%",

@@ -12,6 +12,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Auth from "@store/actions/auth";
+import EditProfile from "../screens/Tabs/SettingsItems/EditProfile";
+import ManageUsers from "../screens/Tabs/SettingsItems/ManageUsers";
+import HelpAndSupport from "../screens/Tabs/SettingsItems/HelpAndSupport";
+import Subscription from "../screens/Tabs/SettingsItems/Subscription";
+import PrivacyPolicy from "../screens/Tabs/SettingsItems/PrivacyPolicy";
+import DeleteAccount from "../screens/Tabs/SettingsItems/DeleteAccount";
+import FillManually from "../screens/Tabs/MenuItems/FillManually";
 const Stack = createStackNavigator();
 
 const StackNavigation = () => {
@@ -69,6 +76,14 @@ const StackNavigation = () => {
             name="BottomTabsNavigation"
             component={BottomTabsNavigation}
           />
+          <Stack.Screen name="EditProfile" component={EditProfile} />
+          <Stack.Screen name="ManageUsers" component={ManageUsers} />
+          <Stack.Screen name="HelpAndSupport" component={HelpAndSupport} />
+          <Stack.Screen name="Subscription" component={Subscription} />
+          <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+          <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
+          <Stack.Screen name="FillManually" component={FillManually} />
+
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />

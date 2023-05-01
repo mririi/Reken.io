@@ -3,8 +3,9 @@ import { Image, View } from "react-native";
 import normalize from "react-native-normalize";
 import CustomText from "../../component/CustomText";
 import colors from "../../constants/colors";
+import { Pressable } from "react-native";
 
-const Menu = () => {
+const Menu = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View
@@ -26,13 +27,16 @@ const Menu = () => {
           <Image source={require("@assets/image-icon.png")} />
           <CustomText>Gallery</CustomText>
         </View>
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <Pressable
+          style={{ justifyContent: "center", alignItems: "center" }}
+          onPress={() => navigation.navigate("FillManually")}
+        >
           <Image source={require("@assets/keyboard-icon.png")} />
 
           <CustomText style={{ color: colors.primary }}>
             Fill Manually
           </CustomText>
-        </View>
+        </Pressable>
       </View>
     </View>
   );

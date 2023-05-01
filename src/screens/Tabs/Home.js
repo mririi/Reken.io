@@ -140,6 +140,7 @@ const Home = () => {
                   style={{
                     width: normalize(50),
                     height: normalize(50),
+                    borderRadius: 8,
                   }}
                 />
               </View>

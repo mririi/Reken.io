@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "black",
     width: "100%",
-    borderBottomWidth: 3,
-    borderColor: "white",
+    borderBottomWidth: 2,
+    borderColor: "#AAAAAA",
     marginBottom: normalize(10),
   },
   input: {
