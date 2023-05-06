@@ -16,7 +16,7 @@ const CustomTextInput = (props) => {
   return (
     <View style={{ marginBottom: normalize(15, "height") }}>
       <CustomText>{props.label}</CustomText>
-      <View style={styles.container}>
+      <View style={{ ...styles.container, ...props.style }}>
         <TextInput
           {...inputProps}
           style={{ ...styles.input, ...props.style }}

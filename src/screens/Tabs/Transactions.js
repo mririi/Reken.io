@@ -13,11 +13,12 @@ import { useEffect } from "react";
 import { FlatList } from "react-native";
 import Loading from "../../component/Loading";
 import { Pressable } from "react-native";
-import { Text } from "react-native";
 import { Modal } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import CustomButton from "../../component/CustomButton";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { startOfMonth, endOfMonth, format } from "date-fns";
+const today = new Date();
 
 const Transactions = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -29,13 +30,29 @@ const Transactions = () => {
   const [items, setItems] = useState();
   const [total, setTotal] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
-  const [fromDate, setFromDate] = useState("YYYY-MM-DD");
-  const [toDate, setToDate] = useState("YYYY-MM-DD");
+  const [fromDate, setFromDate] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
+  const [toDate, setToDate] = useState(new Date().toISOString().slice(0, 10));
+  const [modalToDate, setModalToDate] = useState("YYYY-MM-DD");
+  const [modalFromDate, setModalFromDate] = useState("YYYY-MM-DD");
   const [oldItems, setOldItems] = useState();
   const currency = useSelector((state) => state.auth.currency);
   const transactions = useSelector((state) => state.transactions.transactions);
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+
+  const SumbitHandler = () => {
+    setSearch("");
+    setSelectedFilter("Today");
+    let params = {
+      from_date: modalFromDate,
+      to_date: modalToDate,
+    };
+    loadTransactions(params);
+    setModalVisible(!modalVisible);
+  };
+
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
@@ -45,7 +62,7 @@ const Transactions = () => {
   };
 
   const handleConfirm = (date) => {
-    setFromDate(date.toISOString().slice(0, 10));
+    setModalFromDate(date.toISOString().slice(0, 10));
     hideDatePicker();
   };
   const showDatePicker1 = () => {
@@ -57,43 +74,25 @@ const Transactions = () => {
   };
 
   const handleConfirm1 = (date) => {
-    setToDate(date.toISOString().slice(0, 10));
+    setModalToDate(date.toISOString().slice(0, 10));
     hideDatePicker1();
   };
-  console.log(transactions);
   const loadTransactions = useCallback(
     async (params) => {
       try {
-        // if (selectedFilter === "Today") {
-        //   params = {
-        //     from_date: new Date().toISOString().slice(0, 10),
-        //     to_date: new Date().toISOString().slice(0, 10),
-        //   };
-        // } else if (selectedFilter === "Yesterday") {
-        //   params = {
-        //     from_date: new Date(new Date().setDate(new Date().getDate() - 1))
-        //       .toISOString()
-        //       .slice(0, 10),
-        //     to_date: new Date(new Date().setDate(new Date().getDate() - 1))
-        //       .toISOString()
-        //       .slice(0, 10),
-        //   };
-        // }
         dispatch(Transactionss.transactions(params));
-
-        console.log(items);
       } catch (err) {
         console.log(err);
       }
     },
     [dispatch]
   );
-  console.log(fromDate, toDate);
   console.log(items);
   useEffect(() => {
     let params = {
       from_date: fromDate,
       to_date: toDate,
+      search: search,
     };
     loadTransactions(params);
   }, [fromDate, toDate]);
@@ -120,30 +119,38 @@ const Transactions = () => {
       );
       setToDate(new Date().toISOString().slice(0, 10));
     } else if (selectedFilter === "This Month") {
-      setFromDate(
-        new Date(new Date().setDate(new Date().getDate() - 30))
-          .toISOString()
-          .slice(0, 10)
-      );
-      setToDate(new Date().toISOString().slice(0, 10));
+      const firstDayOfMonth = format(startOfMonth(today), "yyyy-MM-dd");
+      const lastDayOfMonth = format(endOfMonth(today), "yyyy-MM-dd");
+      setFromDate(new Date(firstDayOfMonth).toISOString().slice(0, 10));
+      setToDate(new Date(lastDayOfMonth).toISOString().slice(0, 10));
     } else if (selectedFilter === "Last Month") {
-      setFromDate(
-        new Date(new Date().setDate(new Date().getDate() - 60))
-          .toISOString()
-          .slice(0, 10)
+      const firstDayOfMonth = format(
+        startOfMonth(new Date(new Date().setMonth(new Date().getMonth() - 1))),
+        "yyyy-MM-dd"
       );
-      setToDate(
-        new Date(new Date().setDate(new Date().getDate() - 30))
-          .toISOString()
-          .slice(0, 10)
+      const lastDayOfMonth = format(
+        endOfMonth(new Date(new Date().setMonth(new Date().getMonth() - 1))),
+        "yyyy-MM-dd"
       );
+      setFromDate(firstDayOfMonth);
+      setToDate(lastDayOfMonth);
     }
   }, [selectedFilter]);
   useEffect(() => {
     if (isFocused) {
-      loadTransactions();
+      loadTransactions({ from_date: fromDate, to_date: toDate });
     }
   }, [isFocused]);
+  useEffect(() => {
+    if (items && search) {
+      const filtered = items.filter((item) =>
+        item.merchant_name.toLowerCase().includes(search.toLowerCase())
+      );
+      setItems(filtered);
+    } else {
+      setItems(oldItems);
+    }
+  }, [search]);
   useEffect(() => {
     if (transactions) {
       const nested = transactions.map((item) => item.items);
@@ -165,21 +172,13 @@ const Transactions = () => {
       );
     }
   }, [items]);
+  console.log("===Items===");
+  console.log(items);
+  console.log("===OldItems===");
+  console.log(oldItems);
   useEffect(() => {
-    if (search && items) {
-      const filtered = items.filter((item) =>
-        item.merchant_name.toLowerCase().includes(search.toLowerCase())
-      );
-      setItems(filtered);
-    }
-    if (search === "") {
-      setItems(oldItems);
-    }
-  }, [search]);
-  useEffect(() => {
-    loadTransactions();
+    loadTransactions({ from_date: fromDate, to_date: toDate, search: search });
   }, [loadTransactions]);
-  console.log(total);
   const data = [
     { label: "Today", value: "Today" },
     { label: "Yesterday", value: "Yesterday" },
@@ -412,7 +411,10 @@ const Transactions = () => {
                   /> */}
                   <View style={{ marginTop: normalize(20) }}>
                     <CustomText>Start Date</CustomText>
-                    <View style={{ flexDirection: "row" }}>
+                    <Pressable
+                      style={{ flexDirection: "row" }}
+                      onPress={showDatePicker}
+                    >
                       <TextInput
                         style={{
                           borderColor: "#AAAAAA",
@@ -422,9 +424,8 @@ const Transactions = () => {
                           color: "white",
                           paddingHorizontal: normalize(10),
                         }}
-                        value={fromDate}
+                        value={modalFromDate}
                         editable={false}
-                        onPressIn={showDatePicker}
                       />
                       <Icon
                         name="calendar"
@@ -436,7 +437,7 @@ const Transactions = () => {
                           marginTop: normalize(10),
                         }}
                       />
-                    </View>
+                    </Pressable>
                     <DateTimePickerModal
                       isVisible={isDatePickerVisible}
                       mode="date"
@@ -447,7 +448,10 @@ const Transactions = () => {
                   <View style={{ marginTop: normalize(20) }}>
                     <CustomText>End Date</CustomText>
 
-                    <View style={{ flexDirection: "row" }}>
+                    <Pressable
+                      style={{ flexDirection: "row" }}
+                      onPress={showDatePicker1}
+                    >
                       <TextInput
                         style={{
                           borderColor: "#AAAAAA",
@@ -457,9 +461,8 @@ const Transactions = () => {
                           color: "white",
                           paddingHorizontal: normalize(10),
                         }}
-                        value={toDate}
+                        value={modalToDate}
                         editable={false}
-                        onPressIn={showDatePicker1}
                       />
                       <Icon
                         name="calendar"
@@ -471,7 +474,7 @@ const Transactions = () => {
                           marginTop: normalize(10),
                         }}
                       />
-                    </View>
+                    </Pressable>
                     <DateTimePickerModal
                       isVisible={isDatePickerVisible1}
                       mode="date"
@@ -497,7 +500,7 @@ const Transactions = () => {
                     tstyle={{ color: colors.primary }}
                     onPress={() => setModalVisible(!modalVisible)}
                   />
-                  <CustomButton title="Submit" />
+                  <CustomButton title="Submit" onPress={SumbitHandler} />
                 </View>
               </View>
             </View>
