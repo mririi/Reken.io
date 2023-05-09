@@ -19,6 +19,7 @@ import Subscription from "../screens/Tabs/SettingsItems/Subscription";
 import PrivacyPolicy from "../screens/Tabs/SettingsItems/PrivacyPolicy";
 import DeleteAccount from "../screens/Tabs/SettingsItems/DeleteAccount";
 import FillManually from "../screens/Tabs/MenuItems/FillManually";
+import TransactionDetails from "../screens/Tabs/MenuItems/TransactionDetails";
 const Stack = createStackNavigator();
 
 const StackNavigation = () => {
@@ -83,6 +84,7 @@ const StackNavigation = () => {
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
           <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
           <Stack.Screen name="FillManually" component={FillManually} />
+          <Stack.Screen name="TransactionDetails" component={TransactionDetails} />
 
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />

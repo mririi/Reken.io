@@ -6,6 +6,9 @@ export const CURRENTMONTHEXPENSE = "CURRENTMONTHEXPENSE";
 export const EXPENSEBYMONTH = "EXPENSEBYMONTH";
 export const TRANSACTIONS = "TRANSACTIONS";
 export const LIST = "LIST";
+export const KEY = "KEY"
+export const SCAN = "SCAN"
+
 export const currentMonthExpense = (user_id) => {
   return async (dispatch) => {
     const userData = await AsyncStorage.getItem("userData");
@@ -57,12 +60,17 @@ export const list = (param) => {
         { headers: { Authorization: data.data.token } }
       )
       .then((response) => {
-        console.log(response.data.data);
-        dispatch({
-          type: LIST,
-          categories: param === "category" ? response.data.data : [],
-          merchants: param === "merchant" ? response.data.data : [],
-        });
+        if (param === "category") {
+          dispatch({
+            type: LIST,
+            categories: response.data.data,
+          });
+        } else if (param === "merchant") {
+          dispatch({
+            type: LIST,
+            merchants: response.data.data,
+          });
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -88,6 +96,77 @@ export const transactions = (params) => {
       )
       .then((response) => {
         dispatch({ type: TRANSACTIONS, transactions: response.data.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+};
+export const addExpense = (values) => {
+  return async (dispatch) => {
+    const userData = await AsyncStorage.getItem("userData");
+    const { data } = JSON.parse(userData);
+    const user_id = data.user.id;
+    await axios
+      .post(
+        API_URL + "addexpanse",
+        {
+          user_id,
+          name: values.name,
+          category: values.category,
+          expance_date: values.expance_date,
+          payment_method: values.payment_method ?? "",
+          taxes: !values.tax ? 0 : values.tax,
+          //items: items,
+        },
+        { headers: { Authorization: data.data.token } }
+      )
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+};
+
+// Scan
+const SUBSCRIPTION_KEY = "95980ceffaae4d02ba1f3486f6b299e8";
+const BASE_URL =
+  "https://aelius.cognitiveservices.azure.com/formrecognizer/v2.1/prebuilt/receipt/";
+
+export const fetchReceipt = (key) => {
+  return async (dispatch) => {
+    await axios
+      .get(BASE_URL + `analyzeResults/${key}`, {
+        headers: { "Ocp-Apim-Subscription-Key": SUBSCRIPTION_KEY },
+      })
+      .then((response) => {
+        console.log(response)
+        dispatch({type:SCAN,data:response.data})
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+};
+
+export const postReceipt = (file, type) => {
+  return async (dispatch) => {
+    await axios
+      .post(BASE_URL + "analyze", file, {
+        headers: {
+          "Ocp-Apim-Subscription-Key": SUBSCRIPTION_KEY,
+          "Content-Type": type,
+        },
+      })
+      .then(async (response) => {
+        console.log(response);
+        const operationLocation = response.headers["operation-location"];
+        const key = operationLocation.substring(
+          operationLocation.lastIndexOf("/") + 1
+        );
+        dispatch({type:KEY,key:key})
       })
       .catch((error) => {
         console.log(error);

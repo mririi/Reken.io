@@ -27,7 +27,7 @@ const FillManually = ({ navigation }) => {
   const [date, setDate] = useState("YYYY-MM-DD");
   const [isFocus, setIsFocus] = useState();
   const [isFocus1, setIsFocus1] = useState();
-  const [categoryDropdown, setCategoryDropdown] = useState();
+  const [categoryDropdown, setCategoryDropdown] = useState([]);
   const categories = useSelector((state) => state.transactions.categories);
   const methodDropdown = [{ label: "Debit Card", value: "Debit Card" }];
   useEffect(() => {
@@ -53,7 +53,12 @@ const FillManually = ({ navigation }) => {
   };
   const SubmitHandler = async (values, { resetForm }) => {
     Keyboard.dismiss();
-    action = Transactions.updateProfile(values);
+    let final = {};
+    Object.assign(final, values, {
+      expanse_date: date,
+      category: selectedCategory,
+    });
+    action = Transactions.addExpense(values);
     setError(null);
     setIsLoading(true);
     try {
@@ -336,7 +341,7 @@ const FillManually = ({ navigation }) => {
                       borderWidth: 3,
                     }}
                     tstyle={{ color: colors.primary }}
-                    onPress={() => setModalVisible(!modalVisible)}
+                    onPress={() => navigation.pop(1)}
                   />
                   <CustomButton
                     title="Submit"

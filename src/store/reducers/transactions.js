@@ -3,6 +3,8 @@ import {
   EXPENSEBYMONTH,
   TRANSACTIONS,
   LIST,
+  KEY,
+  SCAN,
 } from "../actions/transactions";
 
 //Initialising state
@@ -12,6 +14,8 @@ const initialState = {
   transactions: null,
   categories: null,
   merchants: null,
+  key:null,
+  scandata:null,
 };
 //Handling actions
 export default (state = initialState, action) => {
@@ -32,6 +36,14 @@ export default (state = initialState, action) => {
       return {
         categories: action.categories,
         merchants: action.merchants,
+      };
+      case KEY:
+      return {
+        key: action.key,
+      };
+      case SCAN:
+      return {
+        scandata: action.data,
       };
     default:
       return state;

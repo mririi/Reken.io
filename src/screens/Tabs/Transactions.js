@@ -33,6 +33,10 @@ const Transactions = () => {
   const [fromDate, setFromDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedMerchant, setSelectedMerchant] = useState("");
+  const [categoryData, setCategoryData] = useState([]);
+  const [merchantData, setMerchantData] = useState([]);
   const [toDate, setToDate] = useState(new Date().toISOString().slice(0, 10));
   const [modalToDate, setModalToDate] = useState("YYYY-MM-DD");
   const [modalFromDate, setModalFromDate] = useState("YYYY-MM-DD");
@@ -42,12 +46,51 @@ const Transactions = () => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
+  const merchants = useSelector((state) => state.transactions.merchants);
+  const categories = useSelector((state) => state.transactions.categories);
+  useEffect(() => {
+    if (categories) {
+      setCategoryData(
+        categories.map((item) => ({ label: item.name, value: item.name }))
+      );
+    }
+  }, [categories]);
+  useEffect(() => {
+    if (merchants) {
+      setMerchantData(
+        merchants.map((item) => ({ label: item.name, value: item.name }))
+      );
+    }
+  }, [merchants]);
+  const loadCategories = useCallback(async () => {
+    try {
+      dispatch(Transactionss.list("category"));
+    } catch (err) {
+      console.log(err);
+    }
+  }, [dispatch]);
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
+  const loadMerchants = useCallback(async () => {
+    try {
+      dispatch(Transactionss.list("merchant"));
+    } catch (err) {
+      console.log(err);
+    }
+  }, [dispatch]);
+  useEffect(() => {
+    loadMerchants();
+  }, [loadMerchants]);
+
   const SumbitHandler = () => {
     setSearch("");
     setSelectedFilter("Today");
     let params = {
       from_date: modalFromDate,
       to_date: modalToDate,
+      category_name: selectedCategory,
+      merchant_name: selectedMerchant,
     };
     loadTransactions(params);
     setModalVisible(!modalVisible);
@@ -87,7 +130,6 @@ const Transactions = () => {
     },
     [dispatch]
   );
-  console.log(items);
   useEffect(() => {
     let params = {
       from_date: fromDate,
@@ -148,7 +190,12 @@ const Transactions = () => {
       );
       setItems(filtered);
     } else {
-      setItems(oldItems);
+      let params = {
+        from_date: fromDate,
+        to_date: toDate,
+        search: search,
+      };
+      loadTransactions(params);
     }
   }, [search]);
   useEffect(() => {
@@ -161,7 +208,6 @@ const Transactions = () => {
   useEffect(() => {
     if (items) {
       const totals = items.map((item) => item.total);
-      console.log(totals);
       setTotal(
         totals.length > 1
           ? totals.reduce(
@@ -172,10 +218,6 @@ const Transactions = () => {
       );
     }
   }, [items]);
-  console.log("===Items===");
-  console.log(items);
-  console.log("===OldItems===");
-  console.log(oldItems);
   useEffect(() => {
     loadTransactions({ from_date: fromDate, to_date: toDate, search: search });
   }, [loadTransactions]);
@@ -362,7 +404,7 @@ const Transactions = () => {
                   <CustomText title="true">Filter</CustomText>
                 </View>
                 <View style={{ width: "100%", marginBottom: normalize(20) }}>
-                  {/* <Dropdown
+                  <Dropdown
                     style={[
                       { ...styles.dropdown, ...{ width: normalize(320) } },
                       isFocus && { borderColor: colors.primary },
@@ -372,16 +414,16 @@ const Transactions = () => {
                     inputSearchStyle={styles.inputSearchStyle}
                     iconStyle={styles.iconStyle}
                     containerStyle={styles.container}
-                    data={data}
+                    data={merchantData}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
                     placeholder={!isFocus ? "Select item" : "..."}
-                    value={selectedFilter}
+                    value={selectedMerchant}
                     onFocus={() => setIsFocus(true)}
                     onBlur={() => setIsFocus(false)}
                     onChange={(item) => {
-                      setSelectedFilter(item.value);
+                      setSelectedMerchant(item.value);
                       setIsFocus(false);
                     }}
                   />
@@ -396,19 +438,19 @@ const Transactions = () => {
                     inputSearchStyle={styles.inputSearchStyle}
                     iconStyle={styles.iconStyle}
                     containerStyle={styles.container}
-                    data={data}
+                    data={categoryData}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
                     placeholder={!isFocus ? "Select item" : "..."}
-                    value={selectedFilter}
+                    value={selectedCategory}
                     onFocus={() => setIsFocus(true)}
                     onBlur={() => setIsFocus(false)}
                     onChange={(item) => {
-                      setSelectedFilter(item.value);
+                      setSelectedCategory(item.value);
                       setIsFocus(false);
                     }}
-                  /> */}
+                  />
                   <View style={{ marginTop: normalize(20) }}>
                     <CustomText>Start Date</CustomText>
                     <Pressable
@@ -553,7 +595,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   container: {
-    backgroundColor: colors.third,
+    backgroundColor: "white",
     color: "white",
   },
   dropdown: {
