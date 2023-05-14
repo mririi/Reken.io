@@ -15,14 +15,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import CustomButton from "../../../component/CustomButton";
-
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 const ValidationSchema = yup.object().shape({});
 const FillManually = ({ navigation }) => {
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Groceries");
   const [selectedMethod, setSelectedMethod] = useState("Debit Card");
-
+  const [inputs, setInputs] = useState([
+    { name: "",price:"",quantity:""},
+  ]);
+  const [total, setTotal] = useState(0);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [date, setDate] = useState("YYYY-MM-DD");
   const [isFocus, setIsFocus] = useState();
@@ -42,6 +45,16 @@ const FillManually = ({ navigation }) => {
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
+  useEffect(()=>{
+    if(inputs){
+      const tot= inputs.reduce((acc, item) => {
+        if(item.quantity && item.price){
+          return acc + item.quantity * item.price;
+        }else return acc
+      }, 0);
+      setTotal(tot)
+    }
+  },[inputs])
 
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
@@ -57,8 +70,10 @@ const FillManually = ({ navigation }) => {
     Object.assign(final, values, {
       expanse_date: date,
       category: selectedCategory,
+      items:inputs,
+      total:total
     });
-    action = Transactions.addExpense(values);
+    action = Transactions.addExpense(final);
     setError(null);
     setIsLoading(true);
     try {
@@ -92,7 +107,23 @@ const FillManually = ({ navigation }) => {
   useEffect(() => {
     loadCategories();
   }, [loadCategories]);
-  console.log(categories);
+
+  const handleInputChange = (text, index, key) => {
+    const newInputs = [...inputs];
+    newInputs[index][key] = text;
+    setInputs(newInputs);
+  };
+
+  const handleAddInput = (index) => {
+    const newInputs = [...inputs, { name: "", email: "" }];
+    setInputs(newInputs);
+  };
+
+  const handleRemoveInput = (index) => {
+    const newInputs = [...inputs];
+    newInputs.splice(index, 1);
+    setInputs(newInputs);
+  };
   return (
     <View
       style={{
@@ -105,10 +136,6 @@ const FillManually = ({ navigation }) => {
         validationSchema={ValidationSchema}
         initialValues={{
           name: "",
-          itemname: "",
-          qte: "",
-          price: "",
-          total: "",
           tax: "",
           paymentdetails: "",
           address: "",
@@ -126,7 +153,7 @@ const FillManually = ({ navigation }) => {
               color="white"
               onPress={() => navigation.pop(1)}
             />
-            <ScrollView>
+            <KeyboardAwareScrollView>
               <View style={{ width: "95%", alignSelf: "center" }}>
                 <CustomText
                   title="true"
@@ -209,67 +236,96 @@ const FillManually = ({ navigation }) => {
                   width: "100%",
                 }}
               >
-                <View style={{ width: "95%", alignSelf: "center" }}>
-                  <CustomText
-                    title="true"
-                    style={{ marginVertical: normalize(20) }}
-                  >
-                    Items
-                  </CustomText>
-                  <Field
-                    component={CustomTextInput}
-                    name="itemname"
-                    label="Item Name"
-                    placeholder="Name"
-                    style={{ backgroundColor: "#252525" }}
-                  />
+                {inputs.map((input, index) => (
                   <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}
+                    style={{ width: "95%", alignSelf: "center",paddingVertical:normalize(20) }}
+                    key={index}
                   >
-                    <View style={{ width: "40%" }}>
-                      <Field
-                        component={CustomTextInput}
-                        name="qte"
-                        label="Quantity"
-                        placeholder="0"
-                        keyboardType="numeric"
-                        style={{ backgroundColor: "#252525" }}
-                      />
+                    <View style={{flexDirection:"row",justifyContent:"space-between"}}>
+                    <CustomText
+                      title="true"
+                      style={{ marginVertical: normalize(20) }}
+                    >
+                      Items
+                    </CustomText>
+                    {index > 0 && ( <Icon name="close" color={"red"} size={normalize(25)}  onPress={() => handleRemoveInput(index)}/>)}
                     </View>
-                    <View style={{ width: "40%" }}>
-                      <Field
-                        component={CustomTextInput}
-                        name="price"
-                        label="Price"
-                        placeholder="0.00"
-                        style={{ backgroundColor: "#252525" }}
-                      />
-                    </View>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <View style={{ width: "40%" }}>
-                      <Field
-                        component={CustomTextInput}
-                        name="total"
-                        label="Total"
-                        placeholder="0.00"
-                        style={{ backgroundColor: "#252525" }}
-                      />
-                    </View>
-                    <CustomButton
-                      title="Add Item"
-                      style={{ marginTop: normalize(15) }}
+                    <CustomText>Name</CustomText>
+                    <View style={styles.containerInput}>
+                    <TextInput
+                                              placeholderTextColor={colors.text}
+                      placeholder="Name"
+                      value={input.name}
+                      onChangeText={(text) =>
+                        handleInputChange(text, index, "name")
+                      }
+                      style={styles.input}
                     />
+                      </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <View style={{ width: "40%" }}>
+                      <CustomText>Quantity</CustomText>
+                      <View style={styles.containerInput}>
+
+                        <TextInput
+                          value={input.quantity}
+                          onChangeText={(text) =>
+                            handleInputChange(text, index, "quantity")
+                          }
+                          keyboardType="numeric"
+                          style={styles.input}
+                          placeholder="0"
+                          placeholderTextColor={colors.text}
+                        />
+                      </View>
+                      </View>
+                      <View style={{ width: "40%" }}>
+                      <CustomText>Price</CustomText>
+                      <View style={styles.containerInput}>
+                        <TextInput
+                          value={input.price}
+                          onChangeText={(text) =>
+                            handleInputChange(text, index, "price")
+                          }
+                          style={styles.input}
+                          keyboardType="numeric"
+                          placeholder="0"
+                          placeholderTextColor={colors.text}
+                        />
+                      </View>
+                    </View>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      {index===inputs.length-1 &&<View style={{ width: "40%" }}>
+                      <CustomText>Total</CustomText>
+                       <View style={styles.containerInput}>
+                      
+                        <TextInput
+                        editable={false}
+                          value={total.toString()}
+                          keyboardType="numeric"
+                          style={styles.input}
+                        />
+                      </View>
+                      </View>}
+                      {index===inputs.length-1 && <CustomButton
+                        title="Add Item"
+                        style={{ marginTop: normalize(15) }}
+                        onPress={handleAddInput}
+                      />}
+                    </View>
                   </View>
-                </View>
+                ))}
               </View>
               <View
                 style={{
@@ -290,11 +346,14 @@ const FillManually = ({ navigation }) => {
                       name="tax"
                       label="Tax"
                       placeholder="0"
+                      keyboardType="numeric"
                     />
                   </View>
                   <View style={{ width: "50%" }}>
+                  <CustomText>Payment Method</CustomText>
+
                     <Dropdown
-                      style={[styles.dropdown]}
+                      style={{...styles.dropdown,...{marginTop:-10}}}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
                       inputSearchStyle={styles.inputSearchStyle}
@@ -319,6 +378,8 @@ const FillManually = ({ navigation }) => {
                   name="paymentdetails"
                   label="Payment Details"
                   placeholder="Last 4 digits of card number"
+                  keyboardType="numeric"
+                  maxLength={4}
                 />
                 <Field
                   component={CustomTextInput}
@@ -350,7 +411,7 @@ const FillManually = ({ navigation }) => {
                   />
                 </View>
               </View>
-            </ScrollView>
+            </KeyboardAwareScrollView>
           </>
         )}
       </Formik>
@@ -361,6 +422,15 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.primary,
     padding: 16,
+  },
+  containerInput:{
+    flexDirection: "row",
+    backgroundColor: "black",
+    width: "100%",
+    borderBottomWidth: 2,
+    borderColor: "#AAAAAA",
+    marginBottom: normalize(10),
+    backgroundColor: "#252525"
   },
   dropdown: {
     height: normalize(50),
@@ -398,5 +468,15 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 16,
   },
+  input: {
+    marginLeft: 10,
+    width: "100%",
+    height: 50,
+    fontWeight: "500",
+    color: "white",
+    fontSize: 18,
+    backgroundColor: "#252525"
+  },
 });
+
 export default FillManually;

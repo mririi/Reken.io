@@ -107,17 +107,21 @@ export const addExpense = (values) => {
     const userData = await AsyncStorage.getItem("userData");
     const { data } = JSON.parse(userData);
     const user_id = data.user.id;
+    console.log(values)
     await axios
       .post(
         API_URL + "addexpanse",
         {
           user_id,
-          name: values.name,
+          merchant: values.name,
           category: values.category,
-          expance_date: values.expance_date,
+          expance_date: values.expanse_date,
           payment_method: values.payment_method ?? "",
           taxes: !values.tax ? 0 : values.tax,
-          //items: items,
+          items: values.items,
+          sub_total:0,
+          total:values.total,
+          location:values.address
         },
         { headers: { Authorization: data.data.token } }
       )

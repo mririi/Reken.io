@@ -99,7 +99,6 @@ if (!result.canceled) {
     <>
     {loading && <Loading />}
     {!loading && <><View style={{ flex: 1, backgroundColor: colors.background }}>
-      <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
       <View
         style={{
           flexDirection: "row",

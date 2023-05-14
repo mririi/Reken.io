@@ -111,10 +111,9 @@ const CustomTabView = ({ expansebymonth, user, currency }) => {
                     : cur.merchant_expanse
                   : []
               }
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
+              renderItem={({ item,index }) => (
                 <View
-                  key={item.id}
+                  key={tab===1?index:index+500}
                   style={{
                     width: "90%",
                     alignSelf: "center",
