@@ -1,3 +1,4 @@
+
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import GetStartedScreen from "@screens/GetStartedScreen";
@@ -23,7 +24,7 @@ import TransactionDetails from "../screens/Tabs/MenuItems/TransactionDetails";
 const Stack = createStackNavigator();
 
 const StackNavigation = () => {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -35,8 +36,8 @@ const StackNavigation = () => {
         setIsAuth(false);
       } else {
         dispatch(Auth.getUser());
-        setLoading(false);
         setIsAuth(true);
+        setLoading(false);
       }
     };
     tryLogin();
@@ -44,27 +45,7 @@ const StackNavigation = () => {
 
   return (
     <>
-      {!isAuth && (
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-            presentation: Platform.OS === "android" ? "modal" : null,
-          }}
-          cardStyle={{ backgroundColor: "transparent" }}
-        >
-          <Stack.Screen name="getStarted" component={GetStartedScreen} />
-
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Register" component={Register} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-          <Stack.Screen name="ResetPassword" component={ResetPassword} />
-          <Stack.Screen name="CodeConfirmation" component={CodeConfirmation} />
-          <Stack.Screen
-            name="BottomTabsNavigation"
-            component={BottomTabsNavigation}
-          />
-        </Stack.Navigator>
-      )}
+      
       {isAuth && (
         <Stack.Navigator
           screenOptions={{
@@ -91,6 +72,27 @@ const StackNavigation = () => {
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           <Stack.Screen name="ResetPassword" component={ResetPassword} />
           <Stack.Screen name="CodeConfirmation" component={CodeConfirmation} />
+        </Stack.Navigator>
+      )}
+      {!isAuth && (
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            presentation: Platform.OS === "android" ? "modal" : null,
+          }}
+          cardStyle={{ backgroundColor: "transparent" }}
+        >
+          <Stack.Screen name="getStarted" component={GetStartedScreen} />
+
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Register" component={Register} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen name="ResetPassword" component={ResetPassword} />
+          <Stack.Screen name="CodeConfirmation" component={CodeConfirmation} />
+          <Stack.Screen
+            name="BottomTabsNavigation"
+            component={BottomTabsNavigation}
+          />
         </Stack.Navigator>
       )}
     </>

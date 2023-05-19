@@ -64,13 +64,17 @@ const Home = () => {
           ? currentmonthexpanse.total_thismonth
           : currentmonthexpanse.total_today
         : [];
-
-      setNumbers(
-        Object.keys(data).map((key) => ({
-          x: ((data[key].total * 100) / total).toFixed(1),
-          y: ((data[key].total * 100) / total).toFixed(1),
-        }))
-      );
+        console.log("here")
+        if (data.length>0){
+          setNumbers(
+            Object.keys(data).map((key) => ({
+              x: ((data[key].total * 100) / total).toFixed(1),
+              y: ((data[key].total * 100) / total).toFixed(1),
+            }))
+          );
+        }else{
+          setNumbers([{x:"0",y:"0"}])
+        }
     }
   }, [data, tab, currentmonthexpanse]);
 
@@ -118,8 +122,8 @@ const Home = () => {
                 <CustomText>
                   Spent {currency && currency.symbol}
                   {tab === 1
-                    ? currentmonthexpanse && currentmonthexpanse.total_thismonth
-                    : currentmonthexpanse && currentmonthexpanse.total_today}
+                    ? currentmonthexpanse && currentmonthexpanse.total_thismonth.toFixed(2)
+                    : currentmonthexpanse && currentmonthexpanse.total_today.toFixed(2)}
                 </CustomText>
               </View>
               <View
@@ -203,8 +207,9 @@ const Home = () => {
           </View>
           <View style={{ marginTop: normalize(5) }}>
             <CustomPie data={numbers} colors={thecolors} />
-
+           
             <FlatList
+            
               data={
                 currentmonthexpanse
                   ? tab === 1
@@ -212,6 +217,7 @@ const Home = () => {
                     : currentmonthexpanse.category_today
                   : []
               }
+              style={{height:normalize(135)}}
               keyExtractor={(item) => item.id}
               renderItem={({ item, index }) => (
                 <View
@@ -224,6 +230,7 @@ const Home = () => {
                     borderBottomWidth: 2,
                     borderBottomColor: "#252525",
                   }}
+                  
                 >
                   <View style={{ flexDirection: "row" }}>
                     <View

@@ -40,7 +40,7 @@ const CustomTabView = ({ expansebymonth, user, currency }) => {
                 }}
               >
                 {currency && currency.symbol}
-                {tab === 1 ? cur.total_category : cur.merchant_total}
+                {tab === 1 ? cur.total_category.toFixed(2) : cur.merchant_total.toFixed(2)}
               </CustomText>
               <CustomText style={{ textAlign: "center" }}>
                 You spent this month
@@ -170,7 +170,7 @@ const CustomTabView = ({ expansebymonth, user, currency }) => {
                     }}
                   >
                     {currency && currency.symbol}
-                    {item.total}
+                    {item.total.toFixed(2)}
                   </CustomText>
                 </View>
               )}

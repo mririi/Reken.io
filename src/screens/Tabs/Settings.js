@@ -1,3 +1,4 @@
+
 import React from "react";
 import CustomText from "../../component/CustomText";
 import { ImageBackground, View } from "react-native";
@@ -27,14 +28,14 @@ const Settings = ({ navigation }) => {
           }}
         >
           <CustomText style={{ color: "white" }}>{title}</CustomText>
-          <Icon name="right" size={normalize(10)} color={"white"} />
+          <Icon name="right" size={normalize(15)} color={"white"} />
         </View>
         <View
           style={{
             height: normalize(3),
             backgroundColor: "#757575",
             width: "100%",
-            marginTop: normalize(10),
+            marginTop: normalize(15),
           }}
         ></View>
       </TouchableOpacity>
@@ -56,7 +57,8 @@ const Settings = ({ navigation }) => {
           }}
         >
           <View>
-            <CustomText title="true" style={{ textAlign: "center" }}>
+            <CustomText title="true" style={{ textAlign: "center",              marginTop: normalize(20),
+ }}>
               {user && user.name ? user.name : "No name available"}
             </CustomText>
             <CustomText>{user && user.email ? user.email : ""}</CustomText>
@@ -66,8 +68,7 @@ const Settings = ({ navigation }) => {
               borderRadius: 10,
               borderWidth: 2,
               borderColor: "white",
-              marginTop: normalize(40),
-              marginBottom: normalize(-70),
+              marginTop: normalize(20),
             }}
           >
             <Image
@@ -83,6 +84,7 @@ const Settings = ({ navigation }) => {
                 height: normalize(80),
                 borderRadius: 8,
               }}
+              resizeMode="stretch"
             />
           </View>
         </View>
@@ -91,7 +93,7 @@ const Settings = ({ navigation }) => {
         style={{
           width: "90%",
           alignSelf: "center",
-          marginVertical: normalize(20),
+          marginVertical: normalize(15),
         }}
       >
         <CustomText title="true">Settings</CustomText>
@@ -119,7 +121,7 @@ const Settings = ({ navigation }) => {
           dispatch(Auth.logout());
           navigation.navigate("Login");
         }}
-        style={{ width: normalize(113), marginLeft: normalize(20) }}
+        style={{ width: normalize(113), marginLeft: normalize(20),marginTop:normalize(-15) }}
       />
     </View>
   );

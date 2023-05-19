@@ -214,10 +214,12 @@ const Transactions = () => {
               (accumulator, currentValue) => accumulator + currentValue,
               0
             )
-          : totals
+          : 0
       );
     }
   }, [items]);
+  console.log("total")
+  console.log(total)
   useEffect(() => {
     loadTransactions({ from_date: fromDate, to_date: toDate, search: search });
   }, [loadTransactions]);
@@ -287,7 +289,7 @@ const Transactions = () => {
                 <CustomText>You spent</CustomText>
                 <CustomText style={{ fontSize: 20, color: "white" }}>
                   {currency && currency.symbol}
-                  {total}
+                {isNaN(total)?0:total.toFixed(2)}
                 </CustomText>
               </View>
               <View>
@@ -376,7 +378,7 @@ const Transactions = () => {
                     }}
                   >
                     {currency && currency.symbol}
-                    {item.total}
+                    {item.total?item.total.toFixed(2):0}
                   </CustomText>
                 </View>
               )}
