@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import * as Font from "expo-font";
 import configureStore from "./src/store/configureStore";
 import StackNavigation from "./src/navigation/StackNavigation";
+import './revenuecat';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);

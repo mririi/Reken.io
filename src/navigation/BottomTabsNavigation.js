@@ -327,7 +327,7 @@ const BottomTabsNavigation = () => {
             ),
           }}
         />
-        <Tab.Screen name="Settings" component={Settings} />
+        <Tab.Screen name="Settings" component={Pay} />
       </Tab.Navigator>
     </View>
   );

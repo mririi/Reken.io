@@ -19,6 +19,7 @@
     "buffer": "^6.0.3",
     "date-fns": "^2.30.0",
     "expo": "~48.0.11",
+    "expo-dev-client": "~2.2.1",
     "expo-file-system": "~15.2.2",
     "expo-image-picker": "^14.1.1",
     "expo-in-app-purchases": "~14.1.1",
