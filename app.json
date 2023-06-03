@@ -15,6 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "jsEngine": "jsc",
+      "bundleIdentifier": "com.ios.reken",
       "infoPlist": {
         "NSCameraUsageDescription": "This app needs access to the camera to take photos.",
         "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select photos."
@@ -31,7 +32,7 @@
         "WRITE_EXTERNAL_STORAGE"
       ],
       "jsEngine": "jsc",
-      "package": "com.mririi.reken"
+      "package": "com.ios.reken"
     },
     "web": {
       "favicon": "./assets/favicon.png"

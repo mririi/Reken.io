@@ -82,6 +82,7 @@ const StackNavigation = () => {
           }}
           cardStyle={{ backgroundColor: "transparent" }}
         >
+          <Stack.Screen name="Subscription" component={Subscription} />
           <Stack.Screen name="getStarted" component={GetStartedScreen} />
 
           <Stack.Screen name="Login" component={Login} />

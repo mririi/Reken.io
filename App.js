@@ -4,8 +4,8 @@ import { Provider } from "react-redux";
 import * as Font from "expo-font";
 import configureStore from "./src/store/configureStore";
 import StackNavigation from "./src/navigation/StackNavigation";
-import './revenuecat';
-
+import { enableScreens } from 'react-native-screens';
+enableScreens();
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
 
