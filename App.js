@@ -5,10 +5,11 @@ import * as Font from "expo-font";
 import configureStore from "./src/store/configureStore";
 import StackNavigation from "./src/navigation/StackNavigation";
 import { enableScreens } from 'react-native-screens';
+import 'react-native-gesture-handler';
+import Purchases from 'react-native-purchases';
 enableScreens();
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-
   useEffect(() => {
     async function prepare() {
       try {
@@ -33,6 +34,9 @@ export default function App() {
   if (!appIsReady) {
     return null;
   }
+  console.log("Purchases", Purchases)
+    // Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+Purchases.configure({ apiKey: "goog_wydwRUfOiUuHQCoWRNqXgOadzwV", appUserID: null, observerMode: false, useAmazon: false });
   //Declaring the stack navigator
   const store = configureStore();
   return (
