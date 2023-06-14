@@ -29,8 +29,14 @@ const Subscription = ({ navigation }) => {
     }
     main()
   },[]);
-  console.log(prod)
-  
+  const purchaseProduct = async (product) => {
+    try{
+      const purchaseMade = await Purchases.purchaseProduct(product)
+      console.log(purchaseMade)
+    }catch(e){
+      console.log(e)
+    }
+  }
   return (
     <View style={{ backgroundColor: "black", flex: 1 }}>
       <View
@@ -67,7 +73,10 @@ const Subscription = ({ navigation }) => {
                 ? { ...styles.selected, ...{ marginBottom: -40 } }
                 : { ...styles.notSelected, ...{ marginBottom: -40 } }
             }
-            onPress={() => setSelected(1)}
+            onPress={() => {
+              setSelected(1);
+              purchaseProduct(prod[1].identifier)
+              }}
           >
             <Image
               source={
@@ -99,7 +108,9 @@ const Subscription = ({ navigation }) => {
           </Pressable>
           <Pressable
             style={selected === 2 ? styles.selected : styles.notSelected}
-            onPress={() => setSelected(2)}
+            onPress={() => {
+              setSelected(2);
+              purchaseProduct(prod[0].identifier)}}
           >
             <Image
               source={
