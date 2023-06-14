@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Pressable, View } from "react-native";
+import { Platform, Pressable, View } from "react-native";
 import normalize from "react-native-normalize";
 import Icon from "react-native-vector-icons/AntDesign";
 import CustomText from "../../../component/CustomText";
@@ -10,10 +10,10 @@ import { StyleSheet } from "react-native";
 import { useState } from "react";
 import Purchases from 'react-native-purchases';
 
-// const APIKeys = {
-//   apple: "appl_ZivZqzCrMtILvpgYiIsebsKSTfC",
-//   google: "goog_wydwRUfOiUuHQCoWRNqXgOadzwV",
-// };
+const APIKeys = {
+  apple: "appl_ZivZqzCrMtILvpgYiIsebsKSTfC",
+  google: "goog_wydwRUfOiUuHQCoWRNqXgOadzwV",
+};
 
 const Subscription = ({ navigation }) => {
   const [selected, setSelected] = useState(1);
@@ -22,15 +22,16 @@ const Subscription = ({ navigation }) => {
     const main = async () => {
       Purchases.setDebugLogsEnabled(true);
 
-      await Purchases.configure({apiKey:"goog_wydwRUfOiUuHQCoWRNqXgOadzwV"})
+      await Purchases.configure({apiKey:Platform.OS==="ios"?APIKeys.apple:APIKeys.google})
       const prods = await Purchases.getProducts(["yearly","monthly"])
       setProd(prods)
       console.log(prods)
     }
     main()
   },[]);
-  const purchaseProduct = async (product) => {
+  const purchaseProduct = async () => {
     try{
+      const product = selected===1?prod[1].identifier:prod[0].identifier
       const purchaseMade = await Purchases.purchaseProduct(product)
       console.log(purchaseMade)
     }catch(e){
@@ -73,10 +74,7 @@ const Subscription = ({ navigation }) => {
                 ? { ...styles.selected, ...{ marginBottom: -40 } }
                 : { ...styles.notSelected, ...{ marginBottom: -40 } }
             }
-            onPress={() => {
-              setSelected(1);
-              purchaseProduct(prod[1].identifier)
-              }}
+            onPress={() => setSelected(1)}
           >
             <Image
               source={
@@ -108,9 +106,8 @@ const Subscription = ({ navigation }) => {
           </Pressable>
           <Pressable
             style={selected === 2 ? styles.selected : styles.notSelected}
-            onPress={() => {
-              setSelected(2);
-              purchaseProduct(prod[0].identifier)}}
+            onPress={() =>
+              setSelected(2)}
           >
             <Image
               source={
@@ -155,6 +152,7 @@ const Subscription = ({ navigation }) => {
         </CustomText>
         <CustomButton
           title="Subscribe"
+          onPress={() => purchaseProduct()}
           style={{ width: "100%", marginTop: normalize(20) }}
         />
       </View>

@@ -1,16 +1,10 @@
 import React from "react";
 import {
   Image,
-  Pressable,
   StyleSheet,
-  Text,
-  Touchable,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Icon from "react-native-vector-icons/FontAwesome";
 import colors from "@constants/colors";
 import Spending from "../screens/Tabs/Spending";
 import Transactions from "../screens/Tabs/Transactions";
@@ -327,7 +321,7 @@ const BottomTabsNavigation = () => {
             ),
           }}
         />
-        <Tab.Screen name="Settings" component={Pay} />
+        <Tab.Screen name="Settings" component={Settings} />
       </Tab.Navigator>
     </View>
   );
