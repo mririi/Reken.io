@@ -14,8 +14,7 @@ import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Auth from "@store/actions/auth";
 import EditProfile from "../screens/Tabs/SettingsItems/EditProfile";
-import ManageUsers from "../screens/Tabs/SettingsItems/ManageUsers";
-import HelpAndSupport from "../screens/Tabs/SettingsItems/HelpAndSupport";
+// import HelpAndSupport from "../screens/Tabs/SettingsItems/HelpAndSupport";
 import Subscription from "../screens/Tabs/SettingsItems/Subscription";
 import PrivacyPolicy from "../screens/Tabs/SettingsItems/PrivacyPolicy";
 import DeleteAccount from "../screens/Tabs/SettingsItems/DeleteAccount";
@@ -59,8 +58,7 @@ const StackNavigation = () => {
             component={BottomTabsNavigation}
           />
           <Stack.Screen name="EditProfile" component={EditProfile} />
-          <Stack.Screen name="ManageUsers" component={ManageUsers} />
-          <Stack.Screen name="HelpAndSupport" component={HelpAndSupport} />
+          {/* <Stack.Screen name="HelpAndSupport" component={HelpAndSupport} /> */}
           <Stack.Screen name="Subscription" component={Subscription} />
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
           <Stack.Screen name="DeleteAccount" component={DeleteAccount} />

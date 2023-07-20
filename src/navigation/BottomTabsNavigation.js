@@ -14,8 +14,8 @@ import normalize from "react-native-normalize";
 import CustomText from "../component/CustomText";
 import Menu from "../screens/Tabs/Menu";
 
+const Tab = createBottomTabNavigator();
 const BottomTabsNavigation = () => {
-  const Tab = createBottomTabNavigator();
 
   return (
     <View style={styles.screen}>
