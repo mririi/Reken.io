@@ -22,7 +22,7 @@ import DeleteAccount from "@screens/Tabs/SettingsItems/DeleteAccount";
 import FillManually from "@screens/Tabs/MenuItems/FillManually";
 import TransactionDetails from "@screens/Tabs/MenuItems/TransactionDetails";
 import BottomTabsNavigation from "./src/navigation/BottomTabsNavigation";
-// import Purchases from 'react-native-purchases';
+import Purchases from 'react-native-purchases';
 enableScreens();
 
 const Stack = createStackNavigator();
@@ -118,7 +118,7 @@ export default function App() {
   if (!appIsReady) {
     return null;
   }
-  // Purchases.configure({ apiKey: "goog_wydwRUfOiUuHQCoWRNqXgOadzwV", appUserID: null, observerMode: false, useAmazon: false });
+  Purchases.configure({ apiKey: "goog_wydwRUfOiUuHQCoWRNqXgOadzwV", appUserID: null, observerMode: false, useAmazon: false });
   const store = configureStore();
   return (
     <Provider store={store}>
