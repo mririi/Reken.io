@@ -17,8 +17,6 @@ const Spending = () => {
   const expensebymonth = useSelector(
     (state) => state.transactions.expensebymonth
   );
-  console.log(user);
-  console.log(expensebymonth);
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 

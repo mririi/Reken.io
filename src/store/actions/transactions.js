@@ -107,7 +107,6 @@ export const addExpense = (values) => {
     const userData = await AsyncStorage.getItem("userData");
     const { data } = JSON.parse(userData);
     const user_id = data.user.id;
-    console.log(values)
     await axios
       .post(
         API_URL + "addexpanse",
@@ -126,7 +125,6 @@ export const addExpense = (values) => {
         { headers: { Authorization: data.data.token } }
       )
       .then((response) => {
-        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -146,7 +144,6 @@ export const fetchReceipt = (key) => {
         headers: { "Ocp-Apim-Subscription-Key": SUBSCRIPTION_KEY },
       })
       .then((response) => {
-        console.log(response)
         dispatch({type:SCAN,data:response.data})
       })
       .catch((error) => {
@@ -165,7 +162,6 @@ export const postReceipt = (file, type) => {
         },
       })
       .then(async (response) => {
-        console.log(response);
         const operationLocation = response.headers["operation-location"];
         const key = operationLocation.substring(
           operationLocation.lastIndexOf("/") + 1

@@ -64,7 +64,6 @@ const Home = () => {
           ? currentmonthexpanse.total_thismonth
           : currentmonthexpanse.total_today
         : [];
-        console.log("here")
         if (data.length>0){
           setNumbers(
             Object.keys(data).map((key) => ({
@@ -91,7 +90,6 @@ const Home = () => {
   useEffect(() => {
     if (isFocused) {
       loadCurrentMonthExpanse();
-      console.log("Home is focused");
     }
   }, [isFocused]);
   useEffect(() => {

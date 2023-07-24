@@ -27,11 +27,12 @@ const TransactionDetails = ({route,navigation}) => {
     const dispatch=useDispatch()
     useEffect(()=>{
       const data=route.params.data
+      console.log(data)
       setMerchantName(data.fields.MerchantName.text??'No Merchant Name')
-      setItems(data.fields.Items.valueArray)
-      setTax(data.fields.Tax.valueNumber)
-      setTotal(data.fields.Total.valueNumber)
-      setAddress(data.fields.MerchantAddress.text)
+      setItems(data.fields.Items.valueArray??[])
+      //setTax(data.fields.Tax.valueNumber??"0")
+      setTotal(data.fields.Total.valueNumber??"0")
+      //setAddress(data.fields.MerchantAddress.text??"")
     },[route])
     const submitHandler=async()=>{
       setIsLoading(true);
@@ -49,15 +50,14 @@ const TransactionDetails = ({route,navigation}) => {
         return {name,price,quantity}
       })
       Object.assign(final, {
-        name: merchantName,
-        category: selectedCategory,
-        total:total,
-        items:finalItems,
-        address:address??"",
-        tax:tax,
+        name: merchantName??"",
+        category: selectedCategory??"",
+        total:total??"0",
+        items:finalItems??[],
+        //address:address??"",
+        //tax:tax??"0",
         expanse_date:new Date().toISOString().slice(0, 10)
       });
-      console.log(final)
       action = Transactionss.addExpense(final);
       setError(null);
       try {

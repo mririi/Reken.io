@@ -41,7 +41,6 @@ export const login = (user) => {
           newlogintype: "rekenio",
         })
         .then(async (response) => {
-          console.log(response.data.user);
           dispatch({
             type: AUTHENTICATE,
             user: response.data.user,
@@ -72,7 +71,6 @@ export const updateProfile = (values) => {
       bodyFormData.append(f, values[f]);
     });
     bodyFormData.append("user_id", data.user.id);
-    console.log(bodyFormData);
     try {
       await axios
         .post(`${API_URL}profileupdate`, bodyFormData, {
@@ -111,7 +109,6 @@ export const forgetPassword = (email) => {
           newlogintype: "rekenio",
         })
         .then(async (response) => {
-          console.log(response);
         })
         .catch((error) => {
           let message = "Something went wrong!";
@@ -135,7 +132,6 @@ export const resetPassword = (values) => {
           newlogintype: "rekenio",
         })
         .then(async (response) => {
-          console.log(response);
         })
         .catch((error) => {
           let message = "Something went wrong!";
@@ -157,7 +153,6 @@ export const resendVerification = (email) => {
           email: email,
         })
         .then(async (response) => {
-          console.log(response);
         })
         .catch((error) => {
           let message = "Something went wrong!";
@@ -181,7 +176,6 @@ export const verifyCode = (values) => {
           newlogintype: "rekenio",
         })
         .then(async (response) => {
-          console.log(response);
         })
         .catch((error) => {
           let message = "Something went wrong!";

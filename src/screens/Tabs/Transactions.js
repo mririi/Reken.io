@@ -218,8 +218,6 @@ const Transactions = () => {
       );
     }
   }, [items]);
-  console.log("total")
-  console.log(total)
   useEffect(() => {
     loadTransactions({ from_date: fromDate, to_date: toDate, search: search });
   }, [loadTransactions]);

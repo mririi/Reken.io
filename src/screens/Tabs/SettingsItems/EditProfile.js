@@ -64,7 +64,6 @@ const EditProfile = ({ navigation }) => {
     });
     Keyboard.dismiss();
     action = Auth.updateProfile(final);
-    console.log(final);
     setError(null);
     setIsLoading(true);
     try {

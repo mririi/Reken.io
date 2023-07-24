@@ -35,8 +35,6 @@ const Menu = ({ navigation }) => {
   }
   useEffect(()=>{
     if(scandata && scandata.status==="running" && keyHolder){
-      console.log("====SCAN DATA ====")
-      console.log(scandata)
       setTimeout(()=>{
         fetchReceiptHandler(keyHolder)
       },2000)
@@ -51,7 +49,6 @@ const Menu = ({ navigation }) => {
     if(scandata && scandata.status==="succeeded"){
       setLoading(false)
       navigation.navigate("TransactionDetails",{data:scandata.analyzeResult.documentResults[0]})
-      console.log(scandata.analyzeResult.documentResults[0])
     }
   },[scandata])
   const fetchReceiptHandler=async(Key)=>{

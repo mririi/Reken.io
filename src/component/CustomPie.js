@@ -4,7 +4,6 @@ import { VictoryPie } from "victory-native";
 
 const CustomPie = (props) => {
   const { data, colors } = props;
-  console.log(data)
   return (
     <VictoryPie
       innerRadius={45}
