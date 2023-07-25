@@ -8,7 +8,7 @@ import colors from "../../../constants/colors";
 import CustomButton from "../../../component/CustomButton";
 import { StyleSheet } from "react-native";
 import { useState } from "react";
-//import Purchases from 'react-native-purchases';
+import Purchases from 'react-native-purchases';
 
 const APIKeys = {
   apple: "appl_ZivZqzCrMtILvpgYiIsebsKSTfC",
