@@ -8,7 +8,7 @@ import colors from "../../../constants/colors";
 import CustomButton from "../../../component/CustomButton";
 import { StyleSheet } from "react-native";
 import { useState } from "react";
-import Purchases from 'react-native-purchases';
+//import Purchases from 'react-native-purchases';
 
 const APIKeys = {
   apple: "appl_ZivZqzCrMtILvpgYiIsebsKSTfC",
@@ -38,7 +38,6 @@ const Subscription = ({ navigation }) => {
   }
   return (
   <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: "black" }}>
-    <View style={{ backgroundColor: "black", flex: 1 }}>
       <View
         style={{
           paddingVertical: normalize(40),
@@ -155,7 +154,6 @@ const Subscription = ({ navigation }) => {
           style={{ width: "100%", marginTop: normalize(20) }}
         />
       </View>
-    </View>
   </KeyboardAwareScrollView>
   );
 };

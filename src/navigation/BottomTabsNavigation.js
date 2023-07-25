@@ -13,6 +13,8 @@ import Home from "@screens/Tabs/Home";
 import normalize from "react-native-normalize";
 import CustomText from "../component/CustomText";
 import Menu from "../screens/Tabs/Menu";
+import SettingsStackNavigator from "./SettingsStackNavigator";
+import MenuStackNavigator from "./MenuStackNavigator";
 
 const Tab = createBottomTabNavigator();
 const BottomTabsNavigation = () => {
@@ -209,7 +211,7 @@ const BottomTabsNavigation = () => {
         />
         <Tab.Screen
           name="Menu"
-          component={Menu}
+          component={MenuStackNavigator}
           options={{
             title: "",
             tabBarLabel: "Menu",
@@ -321,7 +323,7 @@ const BottomTabsNavigation = () => {
             ),
           }}
         />
-        <Tab.Screen name="Settings" component={Settings} />
+        <Tab.Screen name="Settings" component={SettingsStackNavigator} />
       </Tab.Navigator>
     </View>
   );

@@ -29,7 +29,7 @@ const PrivacyPolicy = ({ navigation }) => {
           >
             <Text style={{ margin: 0, color: "white", flex: 1 }}>
               <Text style={{ fontWeight: "600" }}>Privacy Policy{"\n\n"}</Text>
-              Aelius Venture Limited built the Reken.io app as a Freemium app.
+              Aelius Venture Limited built the Reken.io applica as a Premium app.
               This SERVICE is provided by Aelius Venture Limited at no cost and
               is intended for use as is.{"\n\n"}
               This page is used to inform visitors regarding our policies with
