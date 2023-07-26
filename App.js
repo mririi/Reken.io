@@ -7,13 +7,18 @@ import { enableScreens } from 'react-native-screens';
 import 'react-native-gesture-handler';
 import Purchases from 'react-native-purchases';
 import MainStackNavigation from "./src/navigation/MainStackNavigator";
+import { Platform } from "react-native";
 
 enableScreens();
+const APIKeys = {
+  apple: "appl_ZivZqzCrMtILvpgYiIsebsKSTfC",
+  google: "goog_wydwRUfOiUuHQCoWRNqXgOadzwV",
+};
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const store = configureStore();
-  Purchases.configure({ apiKey: "goog_wydwRUfOiUuHQCoWRNqXgOadzwV", appUserID: null, observerMode: false, useAmazon: false });
+  Purchases.configure({ apiKey:Platform.OS==="ios"?APIKeys.apple:APIKeys.google, appUserID: null, observerMode: false, useAmazon: false });
   useEffect(() => {
     async function prepare() {
       try {

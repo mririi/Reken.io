@@ -13,7 +13,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import * as Transactionss from "@store/actions/transactions"
 import Toast from "react-native-toast-message";
 const TransactionDetails = ({route,navigation}) => {
-    const [merchantName,setMerchantName]=useState("")
+    const [merchantName,setMerchantName]=useState("No Merchant Name")
     const [isFocus,setIsFocus]=useState(false)
     const [selectedCategory,setSelectedCategory]=useState("")
     const [categoryData,setCategoryData]=useState([])
@@ -27,16 +27,29 @@ const TransactionDetails = ({route,navigation}) => {
     const dispatch=useDispatch()
     useEffect(()=>{
       const data=route.params.data
-      console.log(data)
-      setMerchantName(data.fields.MerchantName.text??'No Merchant Name')
-      setItems(data.fields.Items.valueArray??[])
-      //setTax(data.fields.Tax.valueNumber??"0")
-      setTotal(data.fields.Total.valueNumber??"0")
-      //setAddress(data.fields.MerchantAddress.text??"")
+      if(data){
+        if(data.fields){
+          console.log(data)
+          if(data.fields.MerchantName){
+            setMerchantName(data.fields.MerchantName.text)
+          }
+          if(data.fields.Items){
+            setItems(data.fields.Items.valueArray)
+          }
+          if(data.fields.Tax){
+            setTax(data.fields.Tax.valueNumber)
+          }
+          if(data.fields.Total){
+            setTotal(data.fields.Total.valueNumber)
+          }
+          if(data.fields.MerchantAddress){
+            setAddress(data.fields.MerchantAddress.text)
+          }
+        }
+      }
     },[route])
     const submitHandler=async()=>{
       setIsLoading(true);
-
       if (selectedCategory===""){
         setError("Please Select a Category")
         setIsLoading(false)
@@ -54,8 +67,8 @@ const TransactionDetails = ({route,navigation}) => {
         category: selectedCategory??"",
         total:total??"0",
         items:finalItems??[],
-        //address:address??"",
-        //tax:tax??"0",
+        address:address??"",
+        tax:tax??"0",
         expanse_date:new Date().toISOString().slice(0, 10)
       });
       action = Transactionss.addExpense(final);

@@ -106,7 +106,6 @@ const Settings = ({ navigation }) => {
           }}
         ></View>
         <SettingItem to="EditProfile" title="Edit Profile" />
-        {/* <SettingItem to="HelpAndSupport" title="Help and Support" /> */}
         <SettingItem
           to="Subscription"
           title="Subscription (Free Plan-upto 3 scans)"
