@@ -19,32 +19,34 @@ const TransactionDetails = ({route,navigation}) => {
     const [categoryData,setCategoryData]=useState([])
     const [items,setItems]=useState([])
     const [error,setError]=useState("")
-    const [total,setTotal]=useState("0")
-    const [tax,setTax]=useState("0")
-    const [address,setAddress]=useState("")
+    const [total,setTotal]=useState(0)
+    const [totalText,setTotalText]=useState("0")
+    const [tax,setTax]=useState(0)
+    const [taxText,setTaxText]=useState("0")
+    const [address,setAddress]=useState("No Address")
     const [isLoading,setIsLoading]=useState(false)
     const categories = useSelector((state) => state.transactions.categories);
     const dispatch=useDispatch()
     useEffect(()=>{
-      const data=route.params.data
-      if(data){
-        if(data.fields){
+      const data=route.params?.data
+      if(data && data.fields){
           console.log(data)
           if(data.fields.MerchantName){
-            setMerchantName(data.fields.MerchantName.text)
+            setMerchantName(data.fields.MerchantName.text ?? "No Merchant Name")
           }
           if(data.fields.Items){
-            setItems(data.fields.Items.valueArray)
+            setItems(data.fields.Items.valueArray ?? [])
           }
           if(data.fields.Tax){
-            setTax(data.fields.Tax.valueNumber)
+            setTax(data.fields.Tax.valueNumber ?? 0)
+            setTaxText(data.fields.Tax.text ?? "0")
           }
           if(data.fields.Total){
-            setTotal(data.fields.Total.valueNumber)
+            setTotal(data.fields.Total.valueNumber ?? 0)
+            setTotalText(data.fields.Total.text ?? "0")
           }
           if(data.fields.MerchantAddress){
-            setAddress(data.fields.MerchantAddress.text)
-          }
+            setAddress(data.fields.MerchantAddress.text ?? "No Address")
         }
       }
     },[route])
@@ -56,10 +58,10 @@ const TransactionDetails = ({route,navigation}) => {
         return;
       }
       let final = {};
-      const finalItems=items.map(item=>{
-        const name=item.valueObject.Name?item.valueObject.Name.text:"No Name"
-        const price=item.valueObject.TotalPrice?item.valueObject.TotalPrice.valueNumber:"0"
-        const quantity=item.valueObject.Quantity?item.valueObject.Quantity.valueNumber:"0"
+      const finalItems=items?.map(item=>{
+        const name=item?.valueObject.Name?item.valueObject.Name.text:"No Name"
+        const price=item?.valueObject.TotalPrice?item.valueObject.TotalPrice.valueNumber:"0"
+        const quantity=item?.valueObject.Quantity?item.valueObject.Quantity.valueNumber:"0"
         return {name,price,quantity}
       })
       Object.assign(final, {
@@ -67,7 +69,7 @@ const TransactionDetails = ({route,navigation}) => {
         category: selectedCategory??"",
         total:total??"0",
         items:finalItems??[],
-        address:address??"",
+        address:address??"No Address",
         tax:tax??"0",
         expanse_date:new Date().toISOString().slice(0, 10)
       });
@@ -122,8 +124,8 @@ const TransactionDetails = ({route,navigation}) => {
     <View style={{backgroundColor:colors.primary,width:normalize(60),height:2}}></View>
     {Array.isArray(items) &&
               items.map((m, i) => (<View key={i} style={{flexDirection:"row",justifyContent:"space-between",marginVertical:normalize(10)}}>
-      <CustomText>{m.valueObject.Name.text} [{m.valueObject.Quantity.text}]</CustomText>
-      <CustomText>{m.valueObject.TotalPrice.text}</CustomText>
+      <CustomText>{m?.valueObject.Name? m?.valueObject.Name.text : "No name"} [{m?.valueObject.Quantity? m?.valueObject.Quantity.text : "No Qty"}]</CustomText>
+      <CustomText>{m?.valueObject.TotalPrice? m?.valueObject.TotalPrice.text : "No price"}</CustomText>
     </View>))}
     </View>
     <CustomText>Category</CustomText>
@@ -153,9 +155,9 @@ const TransactionDetails = ({route,navigation}) => {
               />
       <View style={{marginTop:normalize(10),alignItems:"center",justifyContent:"center"}}>
     <CustomText style={{color:"white"}}>Total</CustomText>
-    <CustomText>{total}</CustomText>
+    <CustomText>{totalText}</CustomText>
     <CustomText style={{color:"white"}}>Tax</CustomText>
-    <CustomText>{tax}%</CustomText>
+    <CustomText>{taxText}%</CustomText>
     <CustomText style={{color:"white"}}>Address</CustomText>
     <CustomText>{address}</CustomText>
       </View>

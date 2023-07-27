@@ -31,8 +31,8 @@ const Subscription = ({ navigation }) => {
   },[]);
   const purchaseProduct = async () => {
     try{
-      const product = selected===1?prod[1].identifier:prod[0].identifier
-      const purchaseMade = await Purchases.purchaseProduct(product)
+      const product = selected===1?prod[0].identifier:prod[1].identifier
+     const purchaseMade = await Purchases.purchaseProduct(product)
     }catch(e){
       console.log(e)
     }
