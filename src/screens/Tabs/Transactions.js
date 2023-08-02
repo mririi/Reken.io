@@ -20,7 +20,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { startOfMonth, endOfMonth, format } from "date-fns";
 const today = new Date();
 
-const Transactions = () => {
+const Transactions = ({navigation}) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isDatePickerVisible1, setDatePickerVisibility1] = useState(false);
 
@@ -323,7 +323,7 @@ const Transactions = () => {
               data={items}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <View
+                <Pressable
                   style={{
                     width: "90%",
                     alignSelf: "center",
@@ -334,6 +334,7 @@ const Transactions = () => {
                     borderBottomWidth: 2,
                     borderBottomColor: "#252525",
                   }}
+                  onPress={() =>navigation.navigate("FillManually", {screen:"transaction",data:item})}
                 >
                   <View style={{ flexDirection: "row" }}>
                     <View
@@ -378,7 +379,7 @@ const Transactions = () => {
                     {currency && currency.symbol}
                     {item.total?item.total.toFixed(2):0}
                   </CustomText>
-                </View>
+                </Pressable>
               )}
             />
           )}

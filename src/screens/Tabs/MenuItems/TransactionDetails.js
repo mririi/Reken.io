@@ -12,6 +12,7 @@ import Loading from '../../../component/Loading'
 import { ScrollView } from 'react-native-gesture-handler'
 import * as Transactionss from "@store/actions/transactions"
 import Toast from "react-native-toast-message";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 const TransactionDetails = ({route,navigation}) => {
     const [merchantName,setMerchantName]=useState("No Merchant Name")
     const [isFocus,setIsFocus]=useState(false)
@@ -115,7 +116,7 @@ const TransactionDetails = ({route,navigation}) => {
   return (
     <>
     {!categoryData && <Loading />}
-    {categoryData && <ScrollView contentContainerStyle={{backgroundColor:colors.background,flex:1,alignItems:"center",justifyContent:"center"}}>
+    {categoryData && <KeyboardAwareScrollView contentContainerStyle={{backgroundColor:colors.background,flex:1,alignItems:"center",justifyContent:"center"}}>
     <CustomText title="true">{merchantName}</CustomText>
     <View style={{marginVertical:normalize(20)}}>
     <View style={{borderWidth:3,borderColor:colors.primary,borderRadius:10,padding:10,marginVertical:normalize(15)}}>
@@ -163,8 +164,14 @@ const TransactionDetails = ({route,navigation}) => {
       </View>
     </View>
     {isLoading && <ActivityIndicator color={colors.primary} size={25} />}
-    {!isLoading && <CustomButton title="Save" onPress={submitHandler}/>}
-</ScrollView>}
+    {!isLoading && <>
+      <View style={{flexDirection:"row",justifyContent:"space-between",width:"90%"}}>
+      <CustomButton title="Cancel" style={{backgroundColor:colors.red}} onPress={()=>navigation.pop(1)}/>
+      <CustomButton title="Edit" onPress={()=>navigation.navigate("FillManually",{screen:"details",data:{items:items,name:merchantName,tax:tax,address:address}})}/>
+      </View>
+      <CustomButton style={{width:"90%",marginTop:normalize(10)}} title="Save" onPress={submitHandler}/>
+      </>}
+</KeyboardAwareScrollView>}
     <Toast />
     </>
     

@@ -6,7 +6,7 @@ import normalize from "react-native-normalize";
 import CustomText from "../../../component/CustomText";
 import * as Transactions from "@store/actions/transactions";
 import * as yup from "yup";
-import { Field, Formik } from "formik";
+import { Field, Formik, setIn } from "formik";
 import CustomTextInput from "../../../component/CustomTextInput";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { TextInput } from "react-native";
@@ -16,8 +16,14 @@ import { useCallback } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import CustomButton from "../../../component/CustomButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-const ValidationSchema = yup.object().shape({});
-const FillManually = ({ navigation }) => {
+import Toast from "react-native-toast-message";
+
+const ValidationSchema = yup.object().shape({
+  paymentdetails: yup
+    .number()
+    .required("Payment Details Field is required"),
+});
+const FillManually = ({ route,navigation }) => {
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Groceries");
@@ -33,6 +39,26 @@ const FillManually = ({ navigation }) => {
   const [categoryDropdown, setCategoryDropdown] = useState([]);
   const categories = useSelector((state) => state.transactions.categories);
   const methodDropdown = [{ label: "Debit Card", value: "Debit Card" }];
+  useEffect(() => {
+    if (route.params?.data){
+      console.log(route.params.data)
+      if (route.params.screen === "details") {
+        setInputs(convertFromDetails(route.params.data.items))
+      }
+      if(route.params.screen==="transaction"){
+        setSelectedCategory(route?.params?.data?.category_name)
+        setDate(route?.params?.data?.expance_date.slice(0, 10))
+      }
+    }
+  },[route]);
+  const convertFromDetails = (originalData) => {
+    const convertedData = originalData.map((obj) => ({
+      name: obj["valueObject"]?.Name?.text || "",
+      price: obj["valueObject"]?.TotalPrice?.valueNumber || 0,
+      quantity: obj["valueObject"]?.Quantity?.valueNumber || 0
+    }));
+    return convertedData;
+  };
   useEffect(() => {
     if (categories) {
       setCategoryDropdown(
@@ -67,22 +93,36 @@ const FillManually = ({ navigation }) => {
   const SubmitHandler = async (values, { resetForm }) => {
     Keyboard.dismiss();
     let final = {};
-    Object.assign(final, values, {
+    let addedValues = {
       expanse_date: date,
       category: selectedCategory,
       items:inputs,
-      total:total
-    });
-    action = Transactions.addExpense(final);
+      total:total,
+    }
+    if (route.params?.screen ==="transaction"){
+      addedValues["id"]=route.params?.data?.id
+    }
+    Object.assign(final, values, addedValues);
+    
+    if(route.params?.screen==="transaction"){
+      action = Transactions.editExpense(final);
+    }else{
+      action = Transactions.addExpense(final);
+    }
     setError(null);
     setIsLoading(true);
     try {
       await dispatch(action);
       resetForm({ values: "" });
       setIsLoading(false);
-      navigation.pop(1);
+      if(route.params?.screen==="transaction"){
+        navigation.pop(1);
+      }else{
+        navigation.pop(2);
+      }
     } catch (err) {
       setError("Invalid credentials");
+      console.log(err);
       setIsLoading(false);
     }
   };
@@ -135,10 +175,10 @@ const FillManually = ({ navigation }) => {
       <Formik
         validationSchema={ValidationSchema}
         initialValues={{
-          name: "",
-          tax: "",
+          name: route?.params?.screen=== "details"?route.params?.data?.name : route.params?.data?.merchant_name || "",
+          tax: route.params?.data?.tax || "0",
           paymentdetails: "",
-          address: "",
+          address: route.params?.data?.address || ""
         }}
         onSubmit={(values, { resetForm }) => {
           SubmitHandler(values, { resetForm });
@@ -273,7 +313,7 @@ const FillManually = ({ navigation }) => {
                       <View style={styles.containerInput}>
 
                         <TextInput
-                          value={input.quantity}
+                          value={input?.quantity?.toString()}
                           onChangeText={(text) =>
                             handleInputChange(text, index, "quantity")
                           }
@@ -288,7 +328,7 @@ const FillManually = ({ navigation }) => {
                       <CustomText>Price</CustomText>
                       <View style={styles.containerInput}>
                         <TextInput
-                          value={input.price}
+                          value={input?.price?.toString()}
                           onChangeText={(text) =>
                             handleInputChange(text, index, "price")
                           }
@@ -415,6 +455,7 @@ const FillManually = ({ navigation }) => {
           </>
         )}
       </Formik>
+      <Toast />
     </View>
   );
 };

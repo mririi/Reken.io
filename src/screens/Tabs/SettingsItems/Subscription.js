@@ -19,12 +19,16 @@ const APIKeys = {
 const Subscription = ({ navigation }) => {
   const [selected, setSelected] = useState(1);
   const [prod,setProd]=useState()
+  const [priceMonthly,setPriceMonthly]=useState("0")
+  const [priceYearly,setPriceYearly]=useState("0")
   useEffect(() => {
     const main = async () => {
       Purchases.setDebugLogsEnabled(true);
 
       await Purchases.configure({apiKey:Platform.OS==="ios"?APIKeys.apple:APIKeys.google})
       const prods = await Purchases.getProducts(["yearly","monthly"])
+      setPriceMonthly(prods[0].price)
+      setPriceYearly(prods[1].price)
       setProd(prods)
     }
     main()
@@ -87,7 +91,7 @@ const Subscription = ({ navigation }) => {
               title="true"
               style={{ color: selected === 1 ? "black" : "#AAAAAA" }}
             >
-              Rs
+              
               <CustomText
                 title="true"
                 style={{
@@ -96,7 +100,7 @@ const Subscription = ({ navigation }) => {
                   fontSize: 34,
                 }}
               >
-                490.00
+                {priceMonthly}
               </CustomText>
             </CustomText>
             <CustomText style={{ color: selected === 1 ? "black" : "#AAAAAA" }}>
@@ -120,7 +124,7 @@ const Subscription = ({ navigation }) => {
               title="true"
               style={{ color: selected === 2 ? "black" : "#AAAAAA" }}
             >
-              Rs
+              
               <CustomText
                 title="true"
                 style={{
@@ -129,7 +133,7 @@ const Subscription = ({ navigation }) => {
                   fontSize: 34,
                 }}
               >
-                4900.00
+                {priceYearly}
               </CustomText>
             </CustomText>
             <CustomText style={{ color: selected === 2 ? "black" : "#AAAAAA" }}>

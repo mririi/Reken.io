@@ -9,4 +9,5 @@ export default {
   background: "#000000",
   BottomTabBG: "#252525",
   BottomTabIcon: "#757575",
+  red:"#FF4545"
 };

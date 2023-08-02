@@ -132,6 +132,36 @@ export const addExpense = (values) => {
   };
 };
 
+export const editExpense = (values) => {
+  return async (dispatch) => {
+    const userData = await AsyncStorage.getItem("userData");
+    const { data } = JSON.parse(userData);
+    const user_id = data.user.id;
+    await axios
+      .post(
+        API_URL + "editexpanse",
+        {
+          user_id,
+          merchant: values.name,
+          category: values.category,
+          expance_date: values.expanse_date,
+          payment_method: values.payment_method ?? "",
+          taxes: !values.tax ? 0 : values.tax,
+          items: values.items,
+          sub_total:0,
+          total:values.total,
+          location:values.address,
+          id: values.id,
+        },
+        { headers: { Authorization: data.data.token } }
+      )
+      .then((response) => {
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+};
 // Scan
 const SUBSCRIPTION_KEY = "95980ceffaae4d02ba1f3486f6b299e8";
 const BASE_URL =
@@ -173,3 +203,4 @@ export const postReceipt = (file, type) => {
       });
   };
 };
+

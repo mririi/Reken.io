@@ -111,6 +111,7 @@ const CustomTabView = ({ expansebymonth, user, currency }) => {
                     : cur.merchant_expanse
                   : []
               }
+              style={{height:normalize(345)}}
               renderItem={({ item,index }) => (
                 <View
                   key={tab===1?index:index+500}

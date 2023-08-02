@@ -7,7 +7,8 @@ import Register from "@screens/Auth/Register";
 import ForgotPassword from "@screens/Auth/ForgotPassword";
 import ResetPassword from "@screens/Auth/ResetPassword";
 import CodeConfirmation from "@screens/Auth/CodeConfirmation";
-
+import FillManually from "../screens/Tabs/MenuItems/FillManually";
+import Menu from "../screens/Tabs/Menu";
 const Stack = createStackNavigator();
 
 const AuthStackNavigator = () => {
@@ -28,6 +29,8 @@ const AuthStackNavigator = () => {
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
       <Stack.Screen name="ResetPassword" component={ResetPassword} />
       <Stack.Screen name="CodeConfirmation" component={CodeConfirmation} />
+      <Stack.Screen name="FillManually" component={FillManually} />
+      <Stack.Screen name="MenuScreen" component={Menu} />
     </Stack.Navigator>
   );
 };

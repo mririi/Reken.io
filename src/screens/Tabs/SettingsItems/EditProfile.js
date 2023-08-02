@@ -22,6 +22,7 @@ import { Keyboard } from "react-native";
 import { ActivityIndicator } from "react-native";
 import currencies from "@assets/currencies.json";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const ValidationSchema = yup.object().shape({});
 
@@ -55,9 +56,9 @@ const EditProfile = ({ navigation }) => {
     let final = {};
     Object.assign(final, values, {
       currency: selectedCurrency,
-      gender: selectedGender,
+      gender: selectedGender??"",
       profile_photo: {
-        uri: image,
+        uri: image??user.profile_photo_url,
         name: "profileImage",
         type: "image/jpeg",
       },
@@ -72,6 +73,7 @@ const EditProfile = ({ navigation }) => {
       setIsLoading(false);
       navigation.pop(1);
     } catch (err) {
+      console.log(err)
       setError("Invalid credentials");
       setIsLoading(false);
     }
@@ -88,16 +90,35 @@ const EditProfile = ({ navigation }) => {
     }
   }, [error]);
 
+  const compressImage = async (uri) => {
+    try {
+      // Compress the image.
+      const compressedImage = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 300 } }],
+        { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
+      );
+
+      console.log('Compressed Image:', compressedImage);
+      return compressedImage.uri;
+    } catch (error) {
+      console.error('Error compressing the image:', error);
+      return null;
+    }
+  };
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.3,
     });
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      const compressedImage = await compressImage(result.assets[0].uri); // Adjust the compression level (0 - 100) as desired
+      console.log(compressedImage);
+      setImage(compressedImage);
     }
   };
   return (
