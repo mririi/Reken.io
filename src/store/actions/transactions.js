@@ -102,6 +102,27 @@ export const transactions = (params) => {
       });
   };
 };
+
+export const transactionDetails = async (expense_id) => {
+  const userData = await AsyncStorage.getItem("userData");
+  const { data } = JSON.parse(userData);
+  const user_id = data.user.id;
+  try {
+    const response = await axios.post(
+      API_URL + "expansedetails",
+      {
+        user_id: user_id,
+        expense_id: expense_id
+      },
+      { headers: { Authorization: data.data.token } }
+    );
+    return response.data; // Return the fetched data
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export const addExpense = (values) => {
   return async (dispatch) => {
     const userData = await AsyncStorage.getItem("userData");
@@ -137,21 +158,42 @@ export const editExpense = (values) => {
     const userData = await AsyncStorage.getItem("userData");
     const { data } = JSON.parse(userData);
     const user_id = data.user.id;
+    await axios.post(
+      API_URL + "expansedetails",
+      {
+        user_id: user_id,
+        expense_id: values.id
+      },
+      { headers: { Authorization: data.data.token } }
+    ).then(async (response) => {
+      const items= response.data.data.items.map((item) => {
+        console.log(item)
+        return {
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          product_id: item.product_id,
+        };
+      });
+      console.log(values)
     await axios
       .post(
         API_URL + "editexpanse",
         {
+          id: values.id,
           user_id,
-          merchant: values.name,
-          category: values.category,
+          merchant_id: response.data.data.merchant_id,
+          merchant_name: values.name,
+          category_id: response.data.data.category_id,
+          category_name: values.category,
           expance_date: values.expanse_date,
           payment_method: values.payment_method ?? "",
           taxes: !values.tax ? 0 : values.tax,
-          items: values.items,
+          items: items,
           sub_total:0,
           total:values.total,
           location:values.address,
-          id: values.id,
         },
         { headers: { Authorization: data.data.token } }
       )
@@ -160,6 +202,7 @@ export const editExpense = (values) => {
       .catch((error) => {
         console.log(error);
       });
+    })
   };
 };
 // Scan

@@ -175,7 +175,7 @@ const FillManually = ({ route,navigation }) => {
       <Formik
         validationSchema={ValidationSchema}
         initialValues={{
-          name: route?.params?.screen=== "details"?route.params?.data?.name : route.params?.data?.merchant_name || "",
+          name: route?.params?.screen=== "details"?route.params?.data?.name : route.params?.data?.merchant_name,
           tax: route.params?.data?.tax || "0",
           paymentdetails: "",
           address: route.params?.data?.address || ""
